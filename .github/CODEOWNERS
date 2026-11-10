@@ -1,5 +1,9 @@
-/.devcontainer/      @ORGANISATION/tech-leads
-/.github/            @ORGANISATION/tech-leads
-/compose.yaml        @ORGANISATION/tech-leads
-/eslint.config.mjs   @ORGANISATION/tech-leads
-package.json         @ORGANISATION/tech-leads
+# Revue demandée automatiquement aux tech leads quand une PR touche
+# la CI, l'outillage ou les dépendances.
+/.devcontainer/      @yaourt-hackathon/tech-leads
+/.github/            @yaourt-hackathon/tech-leads
+/compose.yaml        @yaourt-hackathon/tech-leads
+/eslint.config.mjs   @yaourt-hackathon/tech-leads
+/tsconfig.json       @yaourt-hackathon/tech-leads
+/vite.config.ts      @yaourt-hackathon/tech-leads
+/package.json        @yaourt-hackathon/tech-leads

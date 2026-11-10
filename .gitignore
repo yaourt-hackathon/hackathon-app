@@ -6,3 +6,8 @@ node_modules/
 !.env.example
 consigne/
 .scratch/
+# Sorties de build TanStack Start / Nitro
+dist/
+.output/
+.nitro/
+.tanstack/
