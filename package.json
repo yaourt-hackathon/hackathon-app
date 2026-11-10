@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@hey-api/openapi-ts": "0.99.0",
     "@tailwindcss/vite": "^4.3.5",
     "@tanstack/devtools-vite": "0.8.6",
     "@tanstack/eslint-plugin-query": "^5.107.1",
@@ -29,13 +30,17 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky",
+    "prepare": "husky && npm run api:generate",
     "dev": "vite dev",
+    "predev": "npm run api:generate",
     "build": "vite build",
-    "start": "node .output/server/index.mjs",
+    "prebuild": "npm run api:generate",
+    "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "typecheck": "tsc",
     "test": "vitest run --passWithNoTests",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run format:check"
+    "check": "npm run api:generate && npm run lint && npm run typecheck && npm run test && npm run format:check",
+    "api:pull": "node --env-file-if-exists=.env scripts/api-pull.ts && prettier --write openapi/data-api.json && npm run api:generate",
+    "api:generate": "openapi-ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs}": [

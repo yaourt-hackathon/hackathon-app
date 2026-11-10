@@ -11,3 +11,5 @@ dist/
 .output/
 .nitro/
 .tanstack/
+# Client généré par npm run api:generate (ADR 0004)
+src/lib/data-api/generated/

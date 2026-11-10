@@ -3,7 +3,7 @@
   "info": {
     "title": "API Note de tête",
     "description": "Équipe 7 · Yaourt — exposition des marques aux nouveaux allergènes (UE 2023/1545). Données réelles Open Beauty Facts. Liste d'allergènes provisoire, à vérifier sur EUR-Lex. On parle d'« exposition probable », jamais de « non-conformité ».",
-    "version": "0.2.0"
+    "version": "0.3.1"
   },
   "paths": {
     "/health": {
@@ -15,7 +15,11 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Sante" }
+              }
+            }
           }
         }
       }
@@ -29,7 +33,19 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListeMarques" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
           }
         }
       }
@@ -47,16 +63,37 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Identifiant de la marque, ex. florame",
+              "description": "Identifiant de la marque",
+              "examples": ["florame"],
               "title": "Marque"
             },
-            "description": "Identifiant de la marque, ex. florame"
+            "description": "Identifiant de la marque"
           }
         ],
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Exposition" }
+              }
+            }
+          },
+          "404": {
+            "description": "Marque inconnue",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -72,6 +109,56 @@
   },
   "components": {
     "schemas": {
+      "Erreur": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "examples": ["Marque inconnue : xyz"]
+          }
+        },
+        "type": "object",
+        "required": ["detail"],
+        "title": "Erreur"
+      },
+      "Exposition": {
+        "properties": {
+          "factice": { "type": "boolean", "title": "Factice" },
+          "date_maj": { "type": "string", "title": "Date Maj" },
+          "source": { "$ref": "#/components/schemas/Source" },
+          "marque": { "type": "string", "title": "Marque" },
+          "nb_produits": { "type": "integer", "title": "Nb Produits" },
+          "nb_probable": { "type": "integer", "title": "Nb Probable" },
+          "nb_possible": { "type": "integer", "title": "Nb Possible" },
+          "nb_indetermine": { "type": "integer", "title": "Nb Indetermine" },
+          "nb_non_detecte": { "type": "integer", "title": "Nb Non Detecte" },
+          "urgence": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "haute"],
+            "title": "Urgence"
+          },
+          "produits": {
+            "items": { "$ref": "#/components/schemas/Produit" },
+            "type": "array",
+            "title": "Produits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "factice",
+          "date_maj",
+          "source",
+          "marque",
+          "nb_produits",
+          "nb_probable",
+          "nb_possible",
+          "nb_indetermine",
+          "nb_non_detecte",
+          "urgence",
+          "produits"
+        ],
+        "title": "Exposition"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -82,6 +169,151 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "ListeMarques": {
+        "properties": {
+          "factice": { "type": "boolean", "title": "Factice" },
+          "date_maj": {
+            "type": "string",
+            "title": "Date Maj",
+            "examples": ["2026-11-10"]
+          },
+          "marques": {
+            "items": { "$ref": "#/components/schemas/MarqueResume" },
+            "type": "array",
+            "title": "Marques"
+          }
+        },
+        "type": "object",
+        "required": ["factice", "date_maj", "marques"],
+        "title": "ListeMarques"
+      },
+      "MarqueResume": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifiant à passer à /exposition",
+            "examples": ["florame"]
+          },
+          "marque": { "type": "string", "title": "Marque" },
+          "nb_produits": {
+            "type": "integer",
+            "title": "Nb Produits",
+            "description": "Produits analysables (silver)"
+          },
+          "nb_probable": {
+            "type": "integer",
+            "title": "Nb Probable",
+            "description": "Produits en exposition probable"
+          },
+          "urgence": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "haute"],
+            "title": "Urgence",
+            "description": "haute si plus de 25 % de probables, moyenne si au moins 1"
+          }
+        },
+        "type": "object",
+        "required": ["id", "marque", "nb_produits", "nb_probable", "urgence"],
+        "title": "MarqueResume"
+      },
+      "Produit": {
+        "properties": {
+          "code_barre": {
+            "type": "string",
+            "title": "Code Barre",
+            "examples": ["3516170018624"]
+          },
+          "nom": { "type": "string", "title": "Nom" },
+          "niveau": {
+            "type": "string",
+            "enum": ["probable", "possible", "indetermine", "non_detecte"],
+            "title": "Niveau"
+          },
+          "substances": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Substances",
+            "description": "Allergènes de la NOUVELLE liste lus sur l'étiquette"
+          },
+          "anciens_allergenes": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Anciens Allergenes",
+            "description": "Allergènes de l'ancienne liste lus sur l'étiquette"
+          },
+          "type_rincage": {
+            "type": "string",
+            "enum": ["rince", "non_rince", "indetermine"],
+            "title": "Type Rincage"
+          },
+          "motif": {
+            "type": "string",
+            "title": "Motif",
+            "description": "Pourquoi ce niveau"
+          },
+          "date_fiche": {
+            "type": "string",
+            "title": "Date Fiche",
+            "description": "Dernière mise à jour de la fiche Open Beauty Facts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code_barre",
+          "nom",
+          "niveau",
+          "substances",
+          "anciens_allergenes",
+          "type_rincage",
+          "motif",
+          "date_fiche"
+        ],
+        "title": "Produit"
+      },
+      "Sante": {
+        "properties": {
+          "status": { "type": "string", "title": "Status", "examples": ["ok"] },
+          "factice": { "type": "boolean", "title": "Factice" },
+          "mart_present": { "type": "boolean", "title": "Mart Present" },
+          "gold_present": { "type": "boolean", "title": "Gold Present" }
+        },
+        "type": "object",
+        "required": ["status", "factice", "mart_present", "gold_present"],
+        "title": "Sante"
+      },
+      "Source": {
+        "properties": {
+          "reglement": {
+            "type": "string",
+            "title": "Reglement",
+            "examples": ["UE 2023/1545"]
+          },
+          "catalogue": {
+            "type": "string",
+            "title": "Catalogue",
+            "examples": ["Open Beauty Facts (ODbL)"]
+          },
+          "echeance_produits_en_rayon": {
+            "type": "string",
+            "title": "Echeance Produits En Rayon",
+            "examples": ["2028-07-31"]
+          },
+          "statut_liste_allergenes": {
+            "type": "string",
+            "title": "Statut Liste Allergenes",
+            "examples": ["a_verifier_eurlex"]
+          }
+        },
+        "type": "object",
+        "required": [
+          "reglement",
+          "catalogue",
+          "echeance_produits_en_rayon",
+          "statut_liste_allergenes"
+        ],
+        "title": "Source"
       },
       "ValidationError": {
         "properties": {

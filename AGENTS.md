@@ -16,7 +16,9 @@ Présentation du projet : `README.md`. Stack : TanStack Start (React + TypeScrip
 - Un outil, une responsabilité : le code dans `eslint.config.mjs`, la forme dans `.prettierrc.json`. Aucune règle de forme dans ESLint (`eslint-config-prettier` les coupe).
 - Le hook `.husky/pre-commit` lance lint-staged sur les fichiers indexés. Sa config est dans `package.json`.
 - Où ranger le code : ADR 0005. Une route ne fait pas d'appel réseau ; tout appel externe vit dans un `*.server.ts` de `src/features/<domaine>/`.
+- Toute logique (tri, calcul, gestion d'erreur) a son `*.test.ts` à côté du fichier (Vitest, `vitest.config.ts`). `npm run check` les joue en CI.
 - Imports internes via l'alias `@/` (défini dans `tsconfig.json`), pas de `../../`.
+- L'API data ne s'appelle que via le client généré depuis `openapi/data-api.json` (ADR 0004), dans un `*.server.ts`. `src/lib/data-api/generated/` est gitignoré : ne l'édite pas. Si l'API change : `npm run api:pull`, puis commite la spec.
 - `src/routeTree.gen.ts` est généré par `npm run dev` ou `npm run build` : ne l'édite pas, commite-le.
 - Le plan d'une tâche vit dans son ticket (`gh issue view N`). Les brouillons vont dans `.scratch/`, ignoré par git.
 

@@ -10,12 +10,15 @@ Node 24 ou plus.
 
 ```sh
 npm ci
-npm run dev   # http://localhost:3000
+cp .env.example .env   # DATA_API_URL : adresse de l'API data
+npm run dev            # http://localhost:3000
 ```
 
-| Commande         | Rôle                                        |
-| ---------------- | ------------------------------------------- |
-| `npm run check`  | lint, types, tests et format, comme la CI   |
-| `npm run build`  | build de production dans `.output/`         |
-| `npm start`      | sert le build (`/api/health` pour la sonde) |
-| `npm run format` | corrige la forme                            |
+| Commande               | Rôle                                                                  |
+| ---------------------- | --------------------------------------------------------------------- |
+| `npm run check`        | lint, types, tests et format, comme la CI                             |
+| `npm run build`        | build de production dans `.output/`                                   |
+| `npm start`            | sert le build (`/api/health` pour la sonde)                           |
+| `npm run format`       | corrige la forme                                                      |
+| `npm run api:pull`     | recopie la spec de l'API data dans `openapi/data-api.json`            |
+| `npm run api:generate` | régénère le client typé (lancé par `npm ci`, `dev`, `build`, `check`) |

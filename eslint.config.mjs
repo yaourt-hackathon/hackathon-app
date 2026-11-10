@@ -19,6 +19,7 @@ export default defineConfig(
     'db/data/',
     '**/.venv/',
     'src/routeTree.gen.ts',
+    'src/lib/data-api/generated/',
   ]),
   eslint.configs.recommended,
   // Règles qui lisent les types : promesses oubliées, any implicites…
@@ -26,6 +27,21 @@ export default defineConfig(
   {
     languageOptions: {
       parserOptions: { projectService: true },
+    },
+    rules: {
+      // TanStack Router se pilote en levant notFound() et redirect()
+      '@typescript-eslint/only-throw-error': [
+        'error',
+        {
+          allow: [
+            {
+              from: 'package',
+              package: '@tanstack/router-core',
+              name: ['NotFoundError', 'Redirect'],
+            },
+          ],
+        },
+      ],
     },
   },
   reactHooks.configs.flat['recommended-latest'],
