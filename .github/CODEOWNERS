@@ -6,4 +6,5 @@
 /eslint.config.mjs   @yaourt-hackathon/tech-leads
 /tsconfig.json       @yaourt-hackathon/tech-leads
 /vite.config.ts      @yaourt-hackathon/tech-leads
+/vitest.config.ts    @yaourt-hackathon/tech-leads
 /package.json        @yaourt-hackathon/tech-leads

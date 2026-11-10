@@ -4,3 +4,4 @@ src/routeTree.gen.ts
 .nitro/
 .tanstack/
 db/data/
+src/lib/data-api/generated/
