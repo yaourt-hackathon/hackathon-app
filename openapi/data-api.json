@@ -1,0 +1,104 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API Note de tête",
+    "description": "Équipe 7 · Yaourt — exposition des marques aux nouveaux allergènes (UE 2023/1545). Données réelles Open Beauty Facts. Liste d'allergènes provisoire, à vérifier sur EUR-Lex. On parle d'« exposition probable », jamais de « non-conformité ».",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Technique"],
+        "summary": "Health",
+        "description": "Vérifie que l'API répond et que les données sont là.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/marques": {
+      "get": {
+        "tags": ["Exposition"],
+        "summary": "Marques",
+        "description": "Marques suivies, triées par nombre de produits « probable ».",
+        "operationId": "marques_marques_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/exposition": {
+      "get": {
+        "tags": ["Exposition"],
+        "summary": "Exposition",
+        "description": "Diagnostic d'une marque, avec chaque produit, son niveau et la substance trouvée.",
+        "operationId": "exposition_exposition_get",
+        "parameters": [
+          {
+            "name": "marque",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Identifiant de la marque, ex. florame",
+              "title": "Marque"
+            },
+            "description": "Identifiant de la marque, ex. florame"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" },
+          "input": { "title": "Input" },
+          "ctx": { "type": "object", "title": "Context" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
