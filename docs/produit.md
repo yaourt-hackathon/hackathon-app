@@ -41,11 +41,24 @@ Le parcours du KAM, dans l'ordre. Les six stories **Must** forment la démo ; l'
 
 ## Ce qui existe
 
-- Dans l'app, les six Must, sous la forme du volet de la [maquette v1](https://www.figma.com/design/Wn4wWNsf8bvSYNAlKy5qXk/Maquette?node-id=61-1834) (640 px, comme ouvert à côté de Pegasus) :
-  - `/` « Sujets du jour » : le sujet principal (échéance la plus proche), puis les autres (stories 1 et 2) ;
-  - `/evenements/$evenementId` « Sujet creusé par l'IA » : ce qui change, ce que l'IA a lu et cherché, chez vos clients, pourquoi appeler maintenant, ce qui reste à vérifier, puis « Valider » (story 3) ;
-  - `/evenements/$evenementId/appels` « Appels du jour » : les clients en accordéon, classés, chacun avec sa phrase d'appel, ses arguments sourcés (dont la liste d'ingrédients de l'étiquette, en démo) et ses relances (stories 4 à 6).
-- Should faits : copier la phrase d'appel, ouvrir la source, modifier le fait ou la question (pour cet appel, rien n'est enregistré). En plus, simulés et dits à l'écran : « Marquer comme appelé » et son compteur, le tri. Reste à faire : saisir soi-même un événement, et « Corriger » (discuter du sujet avec l'IA), masqué pour l'instant.
+- Dans l'app, les six Must, sous la forme du volet de la [maquette v6](https://www.figma.com/design/Wn4wWNsf8bvSYNAlKy5qXk/Maquette?node-id=86-1193). Le volet fait 640 px, comme s'il était ouvert à côté de Pegasus. Il fait la hauteur de l'écran et la page ne défile jamais : seul son contenu défile.
+  - `/` « Sujets du jour » : le sujet principal (échéance la plus proche), puis les autres (stories 1 et 2).
+  - `/evenements/$evenementId` « Sujet », en onglets (story 3) :
+    - L'essentiel : ce qui change, chez vos clients, pourquoi appeler maintenant ;
+    - Ce que l'IA a lu : la source, et ce qu'elle a cherché ;
+    - À vérifier.
+  - `/evenements/$evenementId/clients` « Choisir les clients » : le commercial coche ceux qu'il appelle (story 4).
+  - `/evenements/$evenementId/appels` « Liste d'appels » : les clients choisis, classés (story 5). Le choix est dans l'URL (`?clients=`).
+  - `/evenements/$evenementId/appels/$compteId` « Fiche d'appel » : la phrase d'appel, puis trois onglets (story 6) :
+    - les arguments sourcés, avec la liste d'ingrédients de l'étiquette en démo ;
+    - les relances ;
+    - pourquoi ce client.
+- Should faits : copier la phrase d'appel, ouvrir la source, modifier le fait ou la question (pour cet appel, rien n'est enregistré).
+- En plus, simulés et dits à l'écran : « Marquer comme appelé » et son compteur, perdus au rechargement.
+- Reste à faire :
+  - saisir soi-même un événement ;
+  - « Corriger » (discuter du sujet avec l'IA), masqué pour l'instant ;
+  - « Relancer » la veille, absent puisque la veille est préparée à la main.
 - Données : un scénario de démo embarqué (`DATA_SOURCE=demo`, par défaut) ou l'API data (`DATA_SOURCE=api`), au choix ([ADR 0008](adr/0008-source-de-donnees-commutable.md)). Le scénario reprend `EVT-001` de l'API telle qu'au commit data `05991a7` et ajoute deux événements fictifs, `DEMO-01` (lavande) et `DEMO-02` (rose).
 - Hors du parcours : `/marques` (marques par urgence) et `/marques/$id` (produits, niveau, substances, source), sur les allergènes UE 2023/1545. Ces pages lisent toujours l'API, à jour : l'accueil n'y renvoie qu'en mode `api`, pour ne pas contredire le scénario figé.
 - Dans l'API data v0.4.0, lancée par `compose.yaml` : les routes du tableau ci-dessus, copiées dans `openapi/data-api.json`.

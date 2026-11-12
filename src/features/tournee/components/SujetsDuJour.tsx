@@ -1,10 +1,10 @@
-import { Button, Chip, toast, Tooltip } from '@heroui/react';
-import { buttonVariants } from '@heroui/styles';
+import { Chip, IconChevronRight } from '@heroui/react';
+import { buttonVariants, linkVariants } from '@heroui/styles';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Pastille } from '@/components/Pastille';
 import { PiedDonnees } from '@/features/tournee/components/PiedDonnees';
-import { TitreVolet } from '@/features/tournee/components/Volet';
+import { Contenu, EnTete, Volet } from '@/features/tournee/components/Volet';
 import type { EvenementDetecte } from '@/features/tournee/evenements';
 import {
   compter,
@@ -15,7 +15,6 @@ import {
   formaterJourMois,
 } from '@/features/tournee/format';
 import { libelleStatut, libelleType } from '@/features/tournee/libelles';
-import { copier } from '@/features/tournee/presse-papiers';
 import { evenementsQuery } from '@/features/tournee/queries';
 
 type Sujet = EvenementDetecte & {
@@ -23,37 +22,56 @@ type Sujet = EvenementDetecte & {
   ingredients: string[];
 };
 
-// Stories 1 et 2, écran « Sujets du jour » de la maquette v1
+// Stories 1 et 2, écran « Accueil — sujets du jour » de la maquette v6
 export function SujetsDuJour() {
   const { data } = useSuspenseQuery(evenementsQuery());
   const [principal, ...autres] = data.evenements;
 
   return (
-    <>
-      <TitreVolet
+    <Volet>
+      <EnTete
         titre={formaterJour(data.date_maj)}
         sousTitre={`${compter(data.evenements.length, 'sujet')} repéré${
           data.evenements.length > 1 ? 's' : ''
         } pour vos clients`}
-      />
-      {/* Ce qui est simulé se dit à l'écran : la veille est préparée à la main */}
-      <p className="flex items-center gap-2 text-[13px] leading-5 text-secondaire">
-        <span aria-hidden="true" className="size-2 rounded-full bg-success" />
-        {data.mode === 'demo'
-          ? 'Veille préparée pour la démo'
-          : "Veille de l'API data"}{' '}
-        · données du {formaterDate(data.date_maj)}
-      </p>
-      {principal && <SujetPrincipal sujet={principal} />}
-      {autres.length > 0 && (
-        <AutresSujets sujets={autres} dateMaj={data.date_maj} />
-      )}
-      <PiedDonnees
-        mode={data.mode}
-        dateMaj={data.date_maj}
-        crmFictif={data.crm_fictif}
-      />
-    </>
+      >
+        {/* Ce qui est simulé se dit à l'écran : la veille est préparée à la main */}
+        <p className="flex items-center gap-2 text-xs text-muted">
+          <span
+            aria-hidden="true"
+            className="size-1.5 shrink-0 rounded-full bg-success"
+          />
+          {data.mode === 'demo'
+            ? 'Veille préparée pour la démo'
+            : "Veille de l'API data"}{' '}
+          · données du {formaterDate(data.date_maj)}
+        </p>
+      </EnTete>
+      <Contenu>
+        {principal && <SujetPrincipal sujet={principal} />}
+        {autres.length > 0 && (
+          <AutresSujets sujets={autres} dateMaj={data.date_maj} />
+        )}
+        {/* /marques lit toujours l'API, à jour, et le scénario de démo est figé
+            sur une version plus ancienne : en démo, leurs chiffres se
+            contrediraient, donc pas de lien (la page reste à son URL) */}
+        {data.mode === 'api' && (
+          <p className="text-xs">
+            <Link
+              to="/marques"
+              className={linkVariants().base({ className: 'underline' })}
+            >
+              Exposition des marques aux allergènes (UE 2023/1545)
+            </Link>
+          </p>
+        )}
+        <PiedDonnees
+          mode={data.mode}
+          dateMaj={data.date_maj}
+          crmFictif={data.crm_fictif}
+        />
+      </Contenu>
+    </Volet>
   );
 }
 
@@ -62,21 +80,15 @@ function SujetPrincipal({ sujet }: { sujet: Sujet }) {
     <article
       aria-labelledby="sujet-principal"
       data-echeance={sujet.date_echeance}
-      className="flex flex-col gap-5 rounded-2xl border-[1.5px] border-accent bg-surface p-7 shadow-[0_12px_32px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)]"
+      className="flex shrink-0 flex-col gap-3.5 rounded-2xl border border-accent bg-surface p-5 shadow-[0_4px_16px_rgba(0,0,0,0.06)]"
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col items-start gap-2">
-          <h2
-            id="sujet-principal"
-            className="text-[22px] leading-[30px] font-medium"
-          >
-            {sujet.titre}
-          </h2>
-          <Pastille {...libelleStatut[sujet.statut_validation]} />
-        </div>
-        {sujet.source_url && <CopierLienSource url={sujet.source_url} />}
+        <h2 id="sujet-principal" className="text-lg leading-6 font-medium">
+          {sujet.titre}
+        </h2>
+        <Pastille {...libelleStatut[sujet.statut_validation]} />
       </div>
-      <p className="text-[17px] leading-[26px] text-secondaire">
+      <p className="text-sm leading-[21px]">
         {sujet.accroche ?? sujet.resume}{' '}
         {sujet.nb_produits_probables > 0 &&
           `${compter(sujet.nb_produits_probables, 'produit')} de vos clients ${
@@ -84,10 +96,10 @@ function SujetPrincipal({ sujet }: { sujet: Sujet }) {
           } probablement concerné${sujet.nb_produits_probables > 1 ? 's' : ''}.`}
       </p>
       {sujet.ingredients.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <ul
             aria-label="Ingrédients cherchés"
-            className="flex flex-wrap gap-2"
+            className="flex flex-wrap gap-1.5"
           >
             {sujet.ingredients.map((i) => (
               <li key={i}>
@@ -98,34 +110,34 @@ function SujetPrincipal({ sujet }: { sujet: Sujet }) {
             ))}
           </ul>
           {/* Ce qui est simulé se dit, en démo comme sur l'API data */}
-          <p className="text-xs leading-4 text-muted">
+          <p className="text-xs text-muted">
             Accroche et ingrédients préparés par l'équipe, en attendant l'IA
           </p>
         </div>
       )}
-      <dl className="flex border-t border-border pt-4">
-        <div className="flex flex-1 flex-col gap-0.5 pr-6">
-          <dt className="text-[13px] leading-5 text-secondaire">
+      <dl className="flex gap-6 border-t border-border pt-3.5">
+        <div className="flex flex-1 flex-col gap-0.5">
+          <dt className="text-xs text-muted">
             {sujet.nb_produits_touches > 1
               ? 'produits touchés'
               : 'produit touché'}
             , sur les {sujet.nb_produits_analyses} de vos clients
           </dt>
-          <dd className="order-first text-2xl leading-7 font-medium">
+          <dd className="order-first text-xl font-medium">
             {sujet.nb_produits_touches}
           </dd>
         </div>
-        <div className="flex flex-1 flex-col gap-0.5 border-l border-border px-6">
-          <dt className="text-[13px] leading-5 text-secondaire">
-            {sujet.nb_clients > 1 ? 'clients à appeler' : 'client à appeler'}
+        <div className="flex flex-1 flex-col gap-0.5">
+          <dt className="text-xs text-muted">
+            {sujet.nb_clients > 1 ? 'clients concernés' : 'client concerné'}
           </dt>
-          <dd className="order-first text-2xl leading-7 font-medium text-accent">
+          <dd className="order-first text-xl font-medium text-accent">
             {sujet.nb_clients}
           </dd>
         </div>
       </dl>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[13px] leading-5 text-muted">
+        <p className="text-xs text-muted">
           {sujet.source_nom} · {formaterEcheance(sujet.date_echeance)}
         </p>
         <Link
@@ -137,55 +149,6 @@ function SujetPrincipal({ sujet }: { sujet: Sujet }) {
         </Link>
       </div>
     </article>
-  );
-}
-
-// Le « … » de la maquette : copier le lien de la source, pour la partager
-function CopierLienSource({ url }: { url: string }) {
-  async function copierLien() {
-    if (await copier(url)) {
-      toast.success('Lien de la source copié');
-    } else {
-      toast.danger('Copie impossible', { description: url });
-    }
-  }
-  return (
-    <Tooltip delay={300}>
-      <Button
-        isIconOnly
-        size="sm"
-        variant="ghost"
-        aria-label="Copier le lien de la source"
-        onPress={() => void copierLien()}
-      >
-        <IconeCopier />
-      </Button>
-      {/* Le nom du bouton dit l'action ; l'infobulle ajoute le site, si
-          l'adresse se lit (l'API ne garantit pas son format) */}
-      <Tooltip.Content>
-        Copier le lien de la source
-        {URL.canParse(url) && ` · ${new URL(url).hostname}`}
-      </Tooltip.Content>
-    </Tooltip>
-  );
-}
-
-// Deux feuilles superposées, à la taille des icônes de la maquette (16 px)
-function IconeCopier() {
-  return (
-    <svg
-      aria-hidden="true"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinejoin="round"
-    >
-      <rect x="5.25" y="5.25" width="8.5" height="8.5" rx="1.75" />
-      <path d="M10.75 5.25V3.5A1.25 1.25 0 0 0 9.5 2.25H3.5A1.25 1.25 0 0 0 2.25 3.5v6a1.25 1.25 0 0 0 1.25 1.25h1.75" />
-    </svg>
   );
 }
 
@@ -203,15 +166,12 @@ function AutresSujets({
         ? 'Les deux autres sujets du jour'
         : `Les ${sujets.length} autres sujets du jour`;
   return (
-    <section
-      aria-labelledby="autres-sujets"
-      className="flex flex-col gap-4 rounded-2xl bg-background p-6"
-    >
-      <h2 id="autres-sujets" className="text-sm leading-5 text-secondaire">
+    <section aria-labelledby="autres-sujets" className="flex flex-col">
+      <h2 id="autres-sujets" className="text-xs text-muted">
         {titre}
       </h2>
       {/* role="list" : Safari retire la sémantique d'une liste sans puces */}
-      <ul role="list" className="flex flex-col gap-4">
+      <ul role="list" className="flex flex-col divide-y divide-border">
         {sujets.map((s) => (
           <li key={s.evenement_id}>
             <AutreSujet sujet={s} dateMaj={dateMaj} />
@@ -224,34 +184,33 @@ function AutresSujets({
 
 function AutreSujet({ sujet, dateMaj }: { sujet: Sujet; dateMaj: string }) {
   return (
-    // Le lien du titre couvre toute la carte (after:inset-0) : un seul arrêt
-    // de tabulation, et la carte entière est cliquable
+    // Le lien du titre couvre toute la ligne (after:inset-0) : un seul arrêt
+    // de tabulation, et la ligne entière est cliquable
     <div
       data-echeance={sujet.date_echeance}
-      className="relative flex flex-col gap-1.5 rounded-xl bg-surface p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.05)] hover:bg-surface-hover has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-focus"
+      className="relative flex items-center gap-3 py-3 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-focus"
     >
-      <h3 className="text-[15px] leading-[22px] font-medium">
-        <Link
-          to="/evenements/$evenementId"
-          params={{ evenementId: sujet.evenement_id }}
-          className="outline-none after:absolute after:inset-0 after:rounded-[inherit]"
-        >
-          {sujet.titre}
-        </Link>
-      </h3>
-      {sujet.accroche && (
-        <p className="text-sm leading-5 text-secondaire">{sujet.accroche}</p>
-      )}
-      <p className="flex flex-wrap items-center gap-2 text-xs leading-4 text-muted">
-        <span>
-          {libelleType(sujet.type)} · {compter(sujet.nb_clients, 'client')} ·{' '}
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <h3 className="text-sm font-medium">
+          <Link
+            to="/evenements/$evenementId"
+            params={{ evenementId: sujet.evenement_id }}
+            className="outline-none after:absolute after:inset-0"
+          >
+            {sujet.titre}
+          </Link>
+        </h3>
+        <p className="text-xs text-muted">
+          {sujet.accroche ?? libelleType(sujet.type)} ·{' '}
+          {compter(sujet.nb_clients, 'client')} ·{' '}
           {/* « 06/11 » cette année, « 27/07/2023 » sinon */}
           {sujet.date_publication.slice(0, 4) === dateMaj.slice(0, 4)
             ? formaterJourMois(sujet.date_publication)
             : formaterDateCourte(sujet.date_publication)}
-        </span>
-        <Pastille {...libelleStatut[sujet.statut_validation]} />
-      </p>
+        </p>
+      </div>
+      <Pastille {...libelleStatut[sujet.statut_validation]} />
+      <IconChevronRight aria-hidden="true" className="size-4 shrink-0" />
     </div>
   );
 }
