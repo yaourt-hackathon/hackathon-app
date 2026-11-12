@@ -44,7 +44,8 @@ test("le lien vers les marques n'apparaît qu'en mode api", async ({
 }) => {
   const mode = await modeDonnees(request);
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  // L'accueil est bien rendu (pas la page d'erreur, qui a aussi un h1)
+  await expect(page.getByRole('link', { name: 'Lire le sujet' })).toBeVisible();
   // En démo, /marques (API à jour) contredirait le scénario figé
   await expect(
     page.getByRole('link', { name: /Exposition des marques/ }),

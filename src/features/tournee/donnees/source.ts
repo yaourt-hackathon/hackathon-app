@@ -19,7 +19,8 @@ export interface SourceDonnees {
   compte(compteId: string): Promise<Compte | null>;
   /**
    * Listes d'ingrédients des étiquettes (INCI), par code-barres, pour celles
-   * que la source connaît. L'API data ne les expose pas encore (data#4).
+   * que la source connaît. L'API data les donne dans la fiche compte, pas
+   * encore branchée (#49).
    */
   etiquettes(codes: readonly string[]): Promise<Record<string, string>>;
 }

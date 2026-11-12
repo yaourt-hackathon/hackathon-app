@@ -696,7 +696,7 @@ export const scenario = {
   ],
 
   appels: [
-    // EVT-001 : textes, scores et produits de l'API data v0.4.0
+    // EVT-001 : textes, scores et produits de l'API data au commit 05991a7
     {
       evenement_id: 'EVT-001',
       compte_id: 'CPT-001',
