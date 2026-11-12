@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Présentation du projet : `README.md`. Stack : TanStack Start (React + TypeScript), TanStack Query, Tailwind CSS v4, HeroUI v3, Vitest (ADR 0002, 0006).
+Présentation du projet : `README.md`. Ce que l'app doit faire, ses règles produit et ses questions ouvertes : `docs/produit.md` ; à lire avant de coder un écran. Stack : TanStack Start (React + TypeScript), TanStack Query, Tailwind CSS v4, HeroUI v3, Vitest (ADR 0002, 0006).
 
 ## Lancer
 
