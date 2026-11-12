@@ -1,59 +1,61 @@
 # Produit : ce que l'app doit faire
 
-État de la réflexion Product au 10/11 (tableaux « Mise à plat avant maquettes », « Structure du produit », impact map v2, problématique v1.1). Première version, à valider par Product, Tech et Data. Le sujet du défi : [`sujet.md`](sujet.md).
+État au 12/11 du [board FigJam de l'équipe](https://www.figma.com/board/jJe5PS97sJPCsxwhgx2zTL/Givaudan-Hackathon) : [Story map](https://www.figma.com/board/jJe5PS97sJPCsxwhgx2zTL/Givaudan-Hackathon?node-id=149-213), [MoSCoW](https://www.figma.com/board/jJe5PS97sJPCsxwhgx2zTL/Givaudan-Hackathon?node-id=153-301), [Réponses de Givaudan](https://www.figma.com/board/jJe5PS97sJPCsxwhgx2zTL/Givaudan-Hackathon?node-id=151-291), [Mise à plat avant maquettes](https://www.figma.com/board/jJe5PS97sJPCsxwhgx2zTL/Givaudan-Hackathon?node-id=105-142). En cas d'écart, le board fait foi. Le sujet du défi : [`sujet.md`](sujet.md).
 
 ## En une phrase
 
 **Un événement entre, une tournée d'appels sort.** Le monde bouge (une règle change, une matière première manque, un concurrent lance un produit) ; l'outil dit au commercial qui appeler, pourquoi maintenant, et avec quelle phrase.
 
 - Problématique : comment savoir qui contacter, quand, et avec quels arguments sur les produits du client, pour proposer une réponse avant même l'appel d'offres ?
-- Pour qui : le KAM (Key Account Manager), qui suit les clients actuels et répond à leurs appels d'offres.
-- Hors périmètre depuis le 10/11 : la prospection (business developer, entreprises qui ressemblent aux clients). L'API renvoie aussi des `prospects` : l'app ne montre que les `clients`.
+- Pour qui : le KAM (Key Account Manager), qui suit les clients actuels. Persona confirmé par Givaudan le 12/11.
+- Hors périmètre : la prospection (business developer). L'API renvoie aussi des `prospects` : l'app ne montre que les `clients`.
 - Effet wahou visé : en démo, le jury propose une actualité et la tournée se recompose devant lui.
 
 ## Règles qui s'imposent au code
 
 - Pas un CRM : ni liste à tenir, ni fiche à remplir, ni suivi d'échanges.
+- Pas un outil de plus : Givaudan veut moins de saisies répétées. On dit comment la liste d'appels s'insère dans Pegasus, leur outil commercial, même si le prototype est autonome.
 - Un fait, puis une question. Jamais de promesse de solution.
-- L'outil prépare, le commercial mène l'échange.
+- L'outil prépare, le commercial mène l'échange et valide chaque sortie de l'IA.
 - Des entreprises, pas des personnes (RGPD). Un commercial est un code (`KAM-01`), jamais un nom.
 - « Exposition probable », jamais « non-conformité » : une étiquette publique ne donne pas les concentrations.
 - Aucun appel enregistré ni retranscrit.
-- Ce qui est simulé se dit à l'écran : comptes et ventes fictifs (`crm_fictif`), événement d'essai (`statut_validation` = `"test"`).
+- Ce qui est simulé se dit à l'écran : veille préparée à la main, comptes et ventes fictifs (`crm_fictif`), événement d'essai (`statut_validation` = `"test"`).
 
-## Le parcours
+## Le MVP (story map et MoSCoW du 12/11)
 
-Deux entrées : un événement (étapes 1 à 4) ou un brief d'appel d'offres (étape 5). L'étape 6 suit chaque appel.
+Le parcours du KAM, dans l'ordre. Les six stories **Must** forment la démo ; l'étoile marque le moment décisif.
 
-| Étape                  | Ce que voit le commercial                                                                                                                                                                   | À construire                                                                 | Données                                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| 1. Un événement entre  | Une liste « Détectés cette semaine » (date, source) et un champ de saisie libre. L'IA reformule (« Compris : produits contenant de la lavande naturelle »), le commercial valide ou creuse. | Traduire l'événement en critères sur les produits ; discussion pour creuser. | Sources surveillées : textes officiels, matières premières, lancements. Démo : liste préparée. |
-| 2. Qui est touché      | Les clients touchés, avec le produit concerné et l'ingrédient en cause.                                                                                                                     | Relier ingrédient → produit → marque → entreprise.                           | Produits de démo aux ingrédients fiables ; clients simulés.                                    |
-| 3. La raison d'appeler | Le fait sur son produit, la question à poser, la source et l'échéance.                                                                                                                      | La phrase d'ouverture : un fait vérifiable puis une question.                | Faits sourcés ; formulations prudentes.                                                        |
-| 4. La tournée          | Les appels du jour dans l'ordre (1, 2, 3…) et une ligne qui explique l'ordre.                                                                                                               | Classer selon des critères simples et visibles.                              | Critères de classement.                                                                        |
-| 5. Un brief entre      | Une zone où coller le brief ; des arguments, chacun rattaché à un produit du client.                                                                                                        | Lire le brief, le comparer aux produits du client.                           | Un ou deux briefs, trouvés ou simulés.                                                         |
-| 6. Après l'appel       | Une ligne saisie par le commercial : l'accroche a-t-elle marché, qu'a répondu le client.                                                                                                    | Garder les retours pour mieux proposer la fois suivante.                     | Retours simulés.                                                                               |
+| Le commercial…                                                                                  | Rôle de l'IA (relu par le commercial)                                         | API data v0.4.0                                                       |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 1. voit les événements détectés, avec la date et la source                                      | Veille : surveille les sources. Prototype : événements préparés, dit au jury. | `GET /evenements` (`source_nom`, `date_echeance`)                     |
+| 2. choisit un événement                                                                         | —                                                                             | —                                                                     |
+| 3. lit la reformulation et la valide (« Compris : produits contenant de la lavande naturelle ») | Traduit l'événement en critères sur les produits, avant la recherche.         | Rien                                                                  |
+| 4. voit les clients touchés, avec le produit et l'ingrédient en cause                           | Cherche les produits qui répondent aux critères.                              | `GET /comptes/{compte_id}` (`elements_directs`, `elements_indices`)   |
+| 5. voit ses appels classés, avec la raison du classement                                        | —                                                                             | `GET /evenements/{evenement_id}/appels` (`rang`, `raison_classement`) |
+| 6. ★ lit la raison d'appeler : le fait sur le produit, la source, la question                   | Rédige le fait et la question, sans promesse.                                 | même route (`fait`, `question`, `confiance`)                          |
+
+- **Should** : saisir soi-même un événement ; modifier le fait ou la question ; copier la raison d'appeler ; ouvrir la source du fait.
+- **Could** : creuser l'événement en discutant avec l'outil.
+- **Won't, cette semaine** : coller un brief d'appel d'offres ; brancher la veille sur de vraies sources ; noter le résultat de l'appel et en tirer de meilleures accroches ; retrouver la liste ou le résultat dans Pegasus ; la prospection.
 
 ## Ce qui existe
 
-- Dans l'app : `/` (marques par urgence) et `/marques/$id` (produits, niveau, substances, source) sont une première version des étapes 2 et 3, sur un seul événement : les allergènes UE 2023/1545.
-- Dans l'API data v0.4.0, lancée par `compose.yaml`. La spec copiée dans `openapi/data-api.json` est plus ancienne (v0.3.1) : pour ces routes, `npm run api:pull`, puis commiter la spec.
-  - `GET /evenements` (`ListeEvenements`) : la liste de l'étape 1, déjà calculée et validée (`source_nom`, `date_echeance`, `statut_validation`, `nb_comptes_a_appeler`).
-  - `GET /evenements/{evenement_id}/appels` (`ListeAppels`) : étapes 3 et 4 pour **un** événement (`rang`, `raison_classement`, `fait`, `question`, `confiance`). Ordre actuel : `score` = 5 × produits « probable » (10 au plus) + 2 × « possible » (10 au plus) + 30 × part de « probable ».
-  - `GET /comptes/{compte_id}` (`Compte`) : produits touchés du compte (`elements_directs` : ingrédients visés lus sur l'étiquette ; `elements_indices` : ingrédients proches).
-- Rien encore pour la saisie libre, la reformulation par l'IA, le brief et l'après-appel : l'API est en lecture seule et ses événements sont calculés à l'avance. La tournée qui « se recompose devant le jury » n'a donc pas d'API derrière elle aujourd'hui.
+- Dans l'app : `/` (marques par urgence) et `/marques/$id` (produits, niveau, substances, source), une première ébauche des stories 4 et 6 (sans la question à poser), sur un seul événement : les allergènes UE 2023/1545.
+- Dans l'API data v0.4.0, lancée par `compose.yaml` : les routes du tableau ci-dessus. La spec copiée dans `openapi/data-api.json` est encore en v0.3.1 : pour les utiliser, `npm run api:pull`, puis commiter la spec.
+- Ordre actuel des appels, calculé par l'API pour **un** événement : `score` = 5 × produits « probable » (10 au plus) + 2 × « possible » (10 au plus) + 30 × part de « probable ».
+- Manquant : la reformulation (story 3) et toute recherche à partir de critères saisis. L'API est en lecture seule et ses événements sont calculés à l'avance, donc la tournée qui se recompose devant le jury n'a pas d'API derrière elle aujourd'hui.
 
 ## Questions ouvertes
 
 - Événements de la démo : lesquels, combien (deux ou trois) ?
-- Tournée du jour sur plusieurs événements : fusionner les listes par événement, et dans quel ordre ? Proposition Product : échéance, puis nombre de produits touchés.
-- Saisie libre devant le jury : fiable en « quelques secondes » ? Quel plan de secours ?
-- Après l'appel : où garder la ligne saisie sans devenir un CRM ? Un stockage demande un ADR.
-- Brief : aucun exemple d'appel d'offres pour l'instant.
-- Périmètre du 4/12 : quelles étapes dans la démo, le brief en dernier ?
+- Tournée du jour sur plusieurs événements : comment fusionner les listes ? Proposition Product : échéance, puis nombre de produits touchés. Givaudan suggère aussi le potentiel commercial du client.
+- Reformulation en direct devant le jury : fiable en « quelques secondes » ? Quel plan de secours ?
+- Périmètre du 4/12 : les six Must, et quels Should ?
 
 ## Cadre
 
 - Dates de l'école : coaching le 13/11 et le 2/12, oral et dépôt le 4/12 à 17 h. Calendrier du challenge Givaudan : [`sujet.md`](sujet.md).
 - Outils exclus : Base44, Lovable.
-- Maquettes : dans Figma, lues par le MCP `figma` (déclaré dans `.mcp.json`, une connexion Figma par personne). Pour un écran précis, coller le lien du frame (clic droit → Copy link to selection).
+- Indicateurs suivis par Givaudan, utiles au pitch : inflow, win rate, PNWR (réponses du 12/11).
+- Figma : lu par le MCP `figma` (déclaré dans `.mcp.json`, une connexion Figma par personne). Avec un siège View ou Collab, il ne permet que 20 lectures par mois : lire une section par son lien (clic droit → Copy link to selection), jamais tout le board.
