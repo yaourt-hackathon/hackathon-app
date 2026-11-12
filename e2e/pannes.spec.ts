@@ -15,7 +15,13 @@ test('démo, API data arrêtée : le parcours tient, /marques le dit', async ({
     await page.getByRole('link', { name: 'Lire le sujet' }).click();
     await expect(page).toHaveURL(/\/evenements\/[^/]+$/);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await page.getByRole('link', { name: /^Valider et voir/ }).click();
+    await page.getByRole('link', { name: 'Choisir les clients' }).click();
+    await page.getByRole('link', { name: "Générer la liste d'appels" }).click();
+    await page
+      .getByRole('list', { name: 'Clients à appeler' })
+      .getByRole('link')
+      .first()
+      .click();
     await expect(page.locator('[data-texte="question"]:visible')).toBeVisible();
 
     await page.goto('/marques');

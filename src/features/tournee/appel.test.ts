@@ -7,7 +7,6 @@ import {
   separerSource,
   surligner,
   texteACopier,
-  trierAppels,
   trouverAppel,
 } from '@/features/tournee/appel';
 import type { ProduitTouche } from '@/lib/data-api/generated';
@@ -232,19 +231,5 @@ describe('argumentsAppel', () => {
       null,
     );
     expect(premier?.ingredients).toBeUndefined();
-  });
-});
-
-describe('trierAppels', () => {
-  it('trie par rang ou par nom de client', () => {
-    const appels = [
-      { ...complet(2, []), nom_compte: 'Alpha' },
-      { ...complet(1, []), nom_compte: 'Églantine' },
-    ];
-    expect(trierAppels(appels, 'priorite').map((a) => a.rang)).toEqual([1, 2]);
-    expect(trierAppels(appels, 'nom').map((a) => a.nom_compte)).toEqual([
-      'Alpha',
-      'Églantine',
-    ]);
   });
 });

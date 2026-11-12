@@ -5,9 +5,15 @@ import { Link } from '@tanstack/react-router';
 import { Pastille } from '@/components/Pastille';
 import { PiedDonnees } from '@/features/tournee/components/PiedDonnees';
 import {
-  RetourAccueil,
+  Actions,
+  Contenu,
+  EnTete,
+  Onglet,
+  Onglets,
+  Retour,
   Section,
-  TitreVolet,
+  Sections,
+  Volet,
 } from '@/features/tournee/components/Volet';
 import { compter } from '@/features/tournee/format';
 import {
@@ -17,8 +23,8 @@ import {
 import { reformulationQuery, tourneeQuery } from '@/features/tournee/queries';
 import { chiffresTournee } from '@/features/tournee/tournee';
 
-// Story 3, écran « Sujet creusé par l'IA » de la maquette v1 : l'outil dit ce
-// qu'il a compris et trouvé ; le commercial relit, puis valide.
+// Story 3, écran « Sujet » de la maquette v6 : l'outil dit ce qu'il a compris
+// et trouvé ; le commercial relit, puis choisit les clients à appeler.
 export function SujetCreuse({ evenementId }: { evenementId: string }) {
   const { data: tournee } = useSuspenseQuery(tourneeQuery(evenementId));
   const { data: reformulation } = useSuspenseQuery(
@@ -26,127 +32,135 @@ export function SujetCreuse({ evenementId }: { evenementId: string }) {
   );
   const { evenement } = tournee;
   const chiffres = chiffresTournee(tournee.appels);
-  const appels = compter(chiffres.nb_clients, 'appel');
 
   return (
-    <>
-      <RetourAccueil />
-      <TitreVolet
+    <Volet>
+      <EnTete
+        retour={<Retour to="/">Accueil</Retour>}
+        aDroite={<Pastille {...libelleStatut[evenement.statut_validation]} />}
         titre={evenement.titre}
         sousTitre={`${compter(chiffres.nb_produits_touches, 'produit')} ${
           chiffres.nb_produits_touches > 1 ? 'touchés' : 'touché'
         } chez ${chiffres.nb_clients} de vos clients`}
       />
-      <div>
-        <Pastille {...libelleStatut[evenement.statut_validation]} />
-      </div>
-
-      <div className="flex flex-col">
-        <Section titre="Ce qui change">
-          <p>{reformulation?.ceQuiChange ?? evenement.resume}</p>
-        </Section>
-        <Section titre="Ce que l'IA a lu">
-          <p>
-            {evenement.source_nom},{' '}
-            {compter(chiffres.nb_produits_analyses, 'étiquette')} de produits et
-            la liste de vos clients actuels.
-          </p>
-          {evenement.source_url && (
-            <div>
-              <a
-                href={evenement.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={buttonVariants({
-                  variant: 'tertiary',
-                  size: 'sm',
-                  className: 'gap-1',
-                })}
-              >
-                Ouvrir la source
-                <ExternalLinkIcon aria-hidden="true" className="size-4" />
-              </a>
-            </div>
-          )}
-        </Section>
+      <Contenu>
+        <Onglets
+          label="Le sujet"
+          onglets={[
+            { id: 'essentiel', titre: "L'essentiel" },
+            { id: 'lu', titre: "Ce que l'IA a lu" },
+            { id: 'verifier', titre: 'À vérifier' },
+          ]}
+        >
+          <Onglet id="essentiel">
+            <Sections>
+              <Section titre="Ce qui change">
+                <p>{reformulation?.ceQuiChange ?? evenement.resume}</p>
+              </Section>
+              <Section titre="Chez vos clients">
+                <p>
+                  {!chiffres.plus_touche
+                    ? 'Aucun produit de vos clients ne liste ces ingrédients.'
+                    : chiffres.nb_clients === 1
+                      ? `${compter(chiffres.nb_produits_touches, 'produit')} chez ${chiffres.plus_touche.nom}.`
+                      : `${compter(chiffres.nb_produits_touches, 'produit')} chez ${
+                          chiffres.nb_clients
+                        } clients, dont ${chiffres.plus_touche.nb_produits} chez ${chiffres.plus_touche.nom}.`}
+                </p>
+              </Section>
+              {reformulation && (
+                <Section titre="Pourquoi appeler maintenant">
+                  <p>{reformulation.pourquoiMaintenant}</p>
+                </Section>
+              )}
+            </Sections>
+          </Onglet>
+          <Onglet id="lu">
+            <Sections>
+              <Section titre="Ce que l'IA a lu">
+                <p>
+                  {evenement.source_nom},{' '}
+                  {compter(chiffres.nb_produits_analyses, 'étiquette')} de
+                  produits et la liste de vos clients actuels.
+                </p>
+                {evenement.source_url && (
+                  <div>
+                    <a
+                      href={evenement.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={buttonVariants({
+                        variant: 'secondary',
+                        size: 'sm',
+                        className: 'gap-1',
+                      })}
+                    >
+                      Ouvrir la source
+                      <ExternalLinkIcon aria-hidden="true" className="size-4" />
+                    </a>
+                  </div>
+                )}
+              </Section>
+              {reformulation && (
+                <Section titre="Ce que l'IA a cherché">
+                  <p>
+                    {reformulation.texte}. Elle a comparé ces ingrédients aux
+                    étiquettes des produits de vos clients actuels.
+                  </p>
+                  <ul
+                    aria-label="Ingrédients cherchés"
+                    className="flex flex-wrap gap-1.5"
+                  >
+                    {reformulation.ingredients.map((i) => (
+                      <li key={i}>
+                        <Chip color="warning" variant="soft" size="sm">
+                          {i}
+                        </Chip>
+                      </li>
+                    ))}
+                  </ul>
+                </Section>
+              )}
+            </Sections>
+          </Onglet>
+          <Onglet id="verifier">
+            <Sections>
+              <Section titre="Ce qui reste à vérifier">
+                <p>
+                  {reformulation?.aVerifier ??
+                    "Aucune analyse n'est prête pour ce sujet : les clients restent à vérifier."}
+                </p>
+              </Section>
+            </Sections>
+          </Onglet>
+        </Onglets>
+        {/* L'outil prépare, le commercial valide chaque sortie (docs/produit.md) */}
         {reformulation && (
-          <Section titre="Ce que l'IA a cherché">
-            <ul
-              aria-label="Ingrédients cherchés"
-              className="flex flex-wrap gap-2"
-            >
-              {reformulation.ingredients.map((i) => (
-                <li key={i}>
-                  <Chip color="warning" variant="soft" size="sm">
-                    {i}
-                  </Chip>
-                </li>
-              ))}
-            </ul>
-            <p>
-              {reformulation.texte}. Elle a comparé ces ingrédients aux
-              étiquettes des produits de vos clients actuels.
-            </p>
-          </Section>
-        )}
-        <Section titre="Chez vos clients">
-          <p>
-            {!chiffres.plus_touche
-              ? 'Aucun produit de vos clients ne liste ces ingrédients.'
-              : chiffres.nb_clients === 1
-                ? `${compter(chiffres.nb_produits_touches, 'produit')} chez ${chiffres.plus_touche.nom}.`
-                : `${compter(chiffres.nb_produits_touches, 'produit')} chez ${
-                    chiffres.nb_clients
-                  } clients, dont ${chiffres.plus_touche.nb_produits} chez ${chiffres.plus_touche.nom}.`}
-          </p>
-        </Section>
-        {reformulation && (
-          <>
-            <Section titre="Pourquoi appeler maintenant">
-              <p>{reformulation.pourquoiMaintenant}</p>
-            </Section>
-            <Section titre="Ce qui reste à vérifier">
-              <p>{reformulation.aVerifier}</p>
-            </Section>
-          </>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-5 text-[13px] leading-5">
-        <p className="text-muted">
-          {reformulation
-            ? libelleOrigineReformulation[reformulation.origine]
-            : "Aucune analyse n'est prête pour ce sujet : les clients restent à vérifier."}
-        </p>
-        {chiffres.nb_clients > 0 && (
-          <p className="text-secondaire">
-            {appels} {chiffres.nb_clients > 1 ? 'seront créés' : 'sera créé'} si
-            vous validez ce sujet.
+          <p className="text-xs text-muted">
+            {libelleOrigineReformulation[reformulation.origine]}
           </p>
         )}
-      </div>
-
+        <PiedDonnees
+          mode={tournee.mode}
+          dateMaj={tournee.date_maj}
+          crmFictif={tournee.crm_fictif}
+        />
+      </Contenu>
       {/* « Corriger » (discuter du sujet avec l'IA) viendra plus tard : Could */}
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border-[1.5px] border-accent bg-surface p-4 shadow-[0_12px_32px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)]">
+      <Actions>
         <Link to="/" className={buttonVariants({ variant: 'ghost' })}>
           Retour aux événements
         </Link>
         {chiffres.nb_clients > 0 && (
           <Link
-            to="/evenements/$evenementId/appels"
+            to="/evenements/$evenementId/clients"
             params={{ evenementId }}
             className={buttonVariants({ variant: 'primary' })}
           >
-            Valider et voir les {appels}
+            Choisir les clients
           </Link>
         )}
-      </div>
-
-      <PiedDonnees
-        mode={tournee.mode}
-        dateMaj={tournee.date_maj}
-        crmFictif={tournee.crm_fictif}
-      />
-    </>
+      </Actions>
+    </Volet>
   );
 }

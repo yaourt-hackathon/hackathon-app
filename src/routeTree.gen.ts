@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as EvenementsEvenementIdRouteRouteImport } from './routes/evenements/$evenementId/route'
 import { Route as MarquesIndexRouteImport } from './routes/marques/index'
 import { Route as MarquesIdRouteImport } from './routes/marques/$id'
 import { Route as EvenementsEvenementIdIndexRouteImport } from './routes/evenements/$evenementId/index'
+import { Route as EvenementsEvenementIdClientsRouteImport } from './routes/evenements/$evenementId/clients'
 import { Route as EvenementsEvenementIdAppelsIndexRouteImport } from './routes/evenements/$evenementId/appels/index'
 import { Route as EvenementsEvenementIdAppelsCompteIdRouteImport } from './routes/evenements/$evenementId/appels/$compteId'
 
@@ -27,6 +29,12 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
   path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvenementsEvenementIdRouteRoute =
+  EvenementsEvenementIdRouteRouteImport.update({
+    id: '/evenements/$evenementId',
+    path: '/evenements/$evenementId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MarquesIndexRoute = MarquesIndexRouteImport.update({
   id: '/marques/',
   path: '/marques/',
@@ -39,28 +47,36 @@ const MarquesIdRoute = MarquesIdRouteImport.update({
 } as any)
 const EvenementsEvenementIdIndexRoute =
   EvenementsEvenementIdIndexRouteImport.update({
-    id: '/evenements/$evenementId/',
-    path: '/evenements/$evenementId/',
-    getParentRoute: () => rootRouteImport,
+    id: '/',
+    path: '/',
+    getParentRoute: () => EvenementsEvenementIdRouteRoute,
+  } as any)
+const EvenementsEvenementIdClientsRoute =
+  EvenementsEvenementIdClientsRouteImport.update({
+    id: '/clients',
+    path: '/clients',
+    getParentRoute: () => EvenementsEvenementIdRouteRoute,
   } as any)
 const EvenementsEvenementIdAppelsIndexRoute =
   EvenementsEvenementIdAppelsIndexRouteImport.update({
-    id: '/evenements/$evenementId/appels/',
-    path: '/evenements/$evenementId/appels/',
-    getParentRoute: () => rootRouteImport,
+    id: '/appels/',
+    path: '/appels/',
+    getParentRoute: () => EvenementsEvenementIdRouteRoute,
   } as any)
 const EvenementsEvenementIdAppelsCompteIdRoute =
   EvenementsEvenementIdAppelsCompteIdRouteImport.update({
-    id: '/evenements/$evenementId/appels/$compteId',
-    path: '/evenements/$evenementId/appels/$compteId',
-    getParentRoute: () => rootRouteImport,
+    id: '/appels/$compteId',
+    path: '/appels/$compteId',
+    getParentRoute: () => EvenementsEvenementIdRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/evenements/$evenementId': typeof EvenementsEvenementIdRouteRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/marques/$id': typeof MarquesIdRoute
   '/marques/': typeof MarquesIndexRoute
+  '/evenements/$evenementId/clients': typeof EvenementsEvenementIdClientsRoute
   '/evenements/$evenementId/': typeof EvenementsEvenementIdIndexRoute
   '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
   '/evenements/$evenementId/appels/': typeof EvenementsEvenementIdAppelsIndexRoute
@@ -70,6 +86,7 @@ export interface FileRoutesByTo {
   '/api/health': typeof ApiHealthRoute
   '/marques/$id': typeof MarquesIdRoute
   '/marques': typeof MarquesIndexRoute
+  '/evenements/$evenementId/clients': typeof EvenementsEvenementIdClientsRoute
   '/evenements/$evenementId': typeof EvenementsEvenementIdIndexRoute
   '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
   '/evenements/$evenementId/appels': typeof EvenementsEvenementIdAppelsIndexRoute
@@ -77,9 +94,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/evenements/$evenementId': typeof EvenementsEvenementIdRouteRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/marques/$id': typeof MarquesIdRoute
   '/marques/': typeof MarquesIndexRoute
+  '/evenements/$evenementId/clients': typeof EvenementsEvenementIdClientsRoute
   '/evenements/$evenementId/': typeof EvenementsEvenementIdIndexRoute
   '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
   '/evenements/$evenementId/appels/': typeof EvenementsEvenementIdAppelsIndexRoute
@@ -88,9 +107,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/evenements/$evenementId'
     | '/api/health'
     | '/marques/$id'
     | '/marques/'
+    | '/evenements/$evenementId/clients'
     | '/evenements/$evenementId/'
     | '/evenements/$evenementId/appels/$compteId'
     | '/evenements/$evenementId/appels/'
@@ -100,15 +121,18 @@ export interface FileRouteTypes {
     | '/api/health'
     | '/marques/$id'
     | '/marques'
+    | '/evenements/$evenementId/clients'
     | '/evenements/$evenementId'
     | '/evenements/$evenementId/appels/$compteId'
     | '/evenements/$evenementId/appels'
   id:
     | '__root__'
     | '/'
+    | '/evenements/$evenementId'
     | '/api/health'
     | '/marques/$id'
     | '/marques/'
+    | '/evenements/$evenementId/clients'
     | '/evenements/$evenementId/'
     | '/evenements/$evenementId/appels/$compteId'
     | '/evenements/$evenementId/appels/'
@@ -116,12 +140,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EvenementsEvenementIdRouteRoute: typeof EvenementsEvenementIdRouteRouteWithChildren
   ApiHealthRoute: typeof ApiHealthRoute
   MarquesIdRoute: typeof MarquesIdRoute
   MarquesIndexRoute: typeof MarquesIndexRoute
-  EvenementsEvenementIdIndexRoute: typeof EvenementsEvenementIdIndexRoute
-  EvenementsEvenementIdAppelsCompteIdRoute: typeof EvenementsEvenementIdAppelsCompteIdRoute
-  EvenementsEvenementIdAppelsIndexRoute: typeof EvenementsEvenementIdAppelsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evenements/$evenementId': {
+      id: '/evenements/$evenementId'
+      path: '/evenements/$evenementId'
+      fullPath: '/evenements/$evenementId'
+      preLoaderRoute: typeof EvenementsEvenementIdRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/marques/': {
       id: '/marques/'
       path: '/marques'
@@ -156,37 +185,63 @@ declare module '@tanstack/react-router' {
     }
     '/evenements/$evenementId/': {
       id: '/evenements/$evenementId/'
-      path: '/evenements/$evenementId'
+      path: '/'
       fullPath: '/evenements/$evenementId/'
       preLoaderRoute: typeof EvenementsEvenementIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof EvenementsEvenementIdRouteRoute
+    }
+    '/evenements/$evenementId/clients': {
+      id: '/evenements/$evenementId/clients'
+      path: '/clients'
+      fullPath: '/evenements/$evenementId/clients'
+      preLoaderRoute: typeof EvenementsEvenementIdClientsRouteImport
+      parentRoute: typeof EvenementsEvenementIdRouteRoute
     }
     '/evenements/$evenementId/appels/': {
       id: '/evenements/$evenementId/appels/'
-      path: '/evenements/$evenementId/appels'
+      path: '/appels'
       fullPath: '/evenements/$evenementId/appels/'
       preLoaderRoute: typeof EvenementsEvenementIdAppelsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof EvenementsEvenementIdRouteRoute
     }
     '/evenements/$evenementId/appels/$compteId': {
       id: '/evenements/$evenementId/appels/$compteId'
-      path: '/evenements/$evenementId/appels/$compteId'
+      path: '/appels/$compteId'
       fullPath: '/evenements/$evenementId/appels/$compteId'
       preLoaderRoute: typeof EvenementsEvenementIdAppelsCompteIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof EvenementsEvenementIdRouteRoute
     }
   }
 }
 
+interface EvenementsEvenementIdRouteRouteChildren {
+  EvenementsEvenementIdClientsRoute: typeof EvenementsEvenementIdClientsRoute
+  EvenementsEvenementIdIndexRoute: typeof EvenementsEvenementIdIndexRoute
+  EvenementsEvenementIdAppelsCompteIdRoute: typeof EvenementsEvenementIdAppelsCompteIdRoute
+  EvenementsEvenementIdAppelsIndexRoute: typeof EvenementsEvenementIdAppelsIndexRoute
+}
+
+const EvenementsEvenementIdRouteRouteChildren: EvenementsEvenementIdRouteRouteChildren =
+  {
+    EvenementsEvenementIdClientsRoute: EvenementsEvenementIdClientsRoute,
+    EvenementsEvenementIdIndexRoute: EvenementsEvenementIdIndexRoute,
+    EvenementsEvenementIdAppelsCompteIdRoute:
+      EvenementsEvenementIdAppelsCompteIdRoute,
+    EvenementsEvenementIdAppelsIndexRoute:
+      EvenementsEvenementIdAppelsIndexRoute,
+  }
+
+const EvenementsEvenementIdRouteRouteWithChildren =
+  EvenementsEvenementIdRouteRoute._addFileChildren(
+    EvenementsEvenementIdRouteRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EvenementsEvenementIdRouteRoute: EvenementsEvenementIdRouteRouteWithChildren,
   ApiHealthRoute: ApiHealthRoute,
   MarquesIdRoute: MarquesIdRoute,
   MarquesIndexRoute: MarquesIndexRoute,
-  EvenementsEvenementIdIndexRoute: EvenementsEvenementIdIndexRoute,
-  EvenementsEvenementIdAppelsCompteIdRoute:
-    EvenementsEvenementIdAppelsCompteIdRoute,
-  EvenementsEvenementIdAppelsIndexRoute: EvenementsEvenementIdAppelsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

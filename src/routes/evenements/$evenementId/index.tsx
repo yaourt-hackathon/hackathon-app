@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { SujetCreuse } from '@/features/tournee/components/SujetCreuse';
-import { Volet } from '@/features/tournee/components/Volet';
 import { reformulationQuery, tourneeQuery } from '@/features/tournee/queries';
 
 export const Route = createFileRoute('/evenements/$evenementId/')({
@@ -28,9 +27,5 @@ export const Route = createFileRoute('/evenements/$evenementId/')({
 
 function PageSujet() {
   const { evenementId } = Route.useParams();
-  return (
-    <Volet>
-      <SujetCreuse evenementId={evenementId} />
-    </Volet>
-  );
+  return <SujetCreuse evenementId={evenementId} />;
 }

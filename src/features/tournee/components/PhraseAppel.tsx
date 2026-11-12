@@ -29,7 +29,7 @@ export function PhraseAppel({ appel }: { appel: AppelClient }) {
   const boutonEdition = useRef<HTMLButtonElement>(null);
   const aEviter = motsInterdits(`${fait} ${question}`);
   const { phrase, source } = separerSource(fait);
-  // Les ingrédients en cause, mis en avant dans la phrase (maquette v1)
+  // Les ingrédients en cause, mis en avant dans la phrase (maquette v6)
   const termes = [
     ...new Set((appel.produits ?? []).flatMap((p) => p.elements_directs)),
   ];
@@ -53,7 +53,7 @@ export function PhraseAppel({ appel }: { appel: AppelClient }) {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex shrink-0 flex-col gap-3.5 rounded-2xl border border-accent bg-surface p-5">
       {edition ? (
         <div className="flex flex-col gap-4">
           <TextField value={fait} onChange={setFait}>
@@ -67,7 +67,7 @@ export function PhraseAppel({ appel }: { appel: AppelClient }) {
           </TextField>
         </div>
       ) : (
-        <div className="flex flex-col gap-3 text-lg leading-7">
+        <div className="flex flex-col gap-3.5 text-base leading-6">
           <p data-texte="fait">
             {surligner(phrase, termes).map((m, i) =>
               m.enAvant ? (
@@ -79,7 +79,7 @@ export function PhraseAppel({ appel }: { appel: AppelClient }) {
               ),
             )}
             {source && (
-              <span className="mt-1 block text-[13px] leading-5 text-muted">
+              <span className="mt-1 block text-xs leading-4 text-muted">
                 Source : {source}
               </span>
             )}
@@ -103,33 +103,32 @@ export function PhraseAppel({ appel }: { appel: AppelClient }) {
           </Alert>
         )}
         {modifie && (
-          <p className="text-[13px] leading-5 text-muted">
+          <p className="text-xs text-muted">
             Modifié pour cet appel, rien n'est enregistré.
           </p>
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[13px] leading-5 text-muted">
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <p className="min-w-40 flex-1 text-xs text-muted">
           {libelleOrigine[appel.origine_textes]}
         </p>
-        <div className="flex flex-wrap gap-2">
-          {modifie && (
-            <Button variant="ghost" onPress={retablir}>
-              Rétablir le texte
-            </Button>
-          )}
-          <Button
-            ref={boutonEdition}
-            variant="tertiary"
-            onPress={() => setEdition(!edition)}
-          >
-            {edition ? 'Terminer' : 'Modifier'}
+        {modifie && (
+          <Button size="sm" variant="ghost" onPress={retablir}>
+            Rétablir le texte
           </Button>
-          <Button variant="primary" onPress={() => void copierPhrase()}>
-            Copier la phrase
-          </Button>
-        </div>
+        )}
+        <Button
+          ref={boutonEdition}
+          size="sm"
+          variant="secondary"
+          onPress={() => setEdition(!edition)}
+        >
+          {edition ? 'Terminer' : 'Modifier'}
+        </Button>
+        <Button size="sm" variant="primary" onPress={() => void copierPhrase()}>
+          Copier la phrase
+        </Button>
       </div>
     </div>
   );

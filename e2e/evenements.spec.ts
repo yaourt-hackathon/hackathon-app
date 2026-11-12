@@ -23,7 +23,7 @@ test("les sujets du jour, l'échéance la plus proche d'abord", async ({
 
   const principal = page.getByRole('article');
   await expect(principal).toContainText(/produits? touchés?/);
-  await expect(principal).toContainText(/clients? à appeler/);
+  await expect(principal).toContainText(/clients? concernés?/);
   await expect(
     principal.getByText(/^(Fait réel|Événement fictif)$/),
   ).toBeVisible();
