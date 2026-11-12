@@ -2,6 +2,8 @@
 
 Application de l'équipe Yaourt pour le Givaudan AI Innovation Challenge (défi 01 Sales) : un événement entre, une tournée d'appels sort. L'app suit le parcours du KAM : des événements détectés jusqu'à la raison d'appeler chaque client. Elle lit un scénario de démo ou l'API de l'équipe data.
 
+Démo en ligne : https://app-production-0acb17b9.up.railway.app, mise à jour à chaque merge de `develop` dans `main` (ADR 0009).
+
 Sujet : [`docs/sujet.md`](docs/sujet.md). Produit : [`docs/produit.md`](docs/produit.md). Décisions : [`docs/adr/`](docs/adr/). Tickets : [projet « La crèmerie »](https://github.com/orgs/yaourt-hackathon/projects/2).
 
 ## Lancer toute la tranche
