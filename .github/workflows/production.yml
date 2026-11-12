@@ -27,7 +27,7 @@ jobs:
       url: https://app-production-0acb17b9.up.railway.app
     steps:
       - uses: actions/checkout@v7
-      # Version épinglée, comme les actions
+      # Version exacte, pour un déploiement reproductible
       - run: npm install --global @railway/cli@5.71.0
       # Railway construit le Dockerfile, puis attend /api/health ; un échec
       # fait échouer le job et laisse l'ancienne version en ligne
@@ -36,6 +36,6 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       # La version en ligne tourne bien sur le scénario de démo (ADR 0008)
       - run: |
-          curl -fsS --retry 5 --retry-all-errors "$URL/api/health" | tee /dev/stderr | grep -q '"source":"demo"'
+          curl -fsS --max-time 10 --retry 5 --retry-all-errors "$URL/api/health" | tee /dev/stderr | grep -q '"source":"demo"'
         env:
           URL: https://app-production-0acb17b9.up.railway.app
