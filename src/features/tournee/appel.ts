@@ -175,17 +175,3 @@ export function argumentsAppel(
   }
   return [...liste, ...(reformulation?.arguments ?? [])];
 }
-
-export type Tri = 'priorite' | 'nom';
-
-/** Les appels par rang (priorité) ou par nom de client. */
-export function trierAppels(
-  appels: readonly AppelClient[],
-  tri: Tri,
-): AppelClient[] {
-  return [...appels].sort((a, b) =>
-    tri === 'nom'
-      ? a.nom_compte.localeCompare(b.nom_compte, 'fr')
-      : a.rang - b.rang,
-  );
-}

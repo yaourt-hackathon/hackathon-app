@@ -38,7 +38,8 @@ export const libelleOrigineReformulation: Record<
   Reformulation['origine'],
   string
 > = {
-  preparee: "Préparé par l'équipe en attendant l'IA, à relire avant de valider",
-  api: "Écrit à partir de l'API data, à relire avant de valider",
-  llm: "Rédigé par l'IA, à relire avant de valider",
+  preparee:
+    "Préparé par l'équipe en attendant l'IA, à relire avant de choisir les clients",
+  api: "Écrit à partir de l'API data, à relire avant de choisir les clients",
+  llm: "Rédigé par l'IA, à relire avant de choisir les clients",
 };

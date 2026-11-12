@@ -1,6 +1,6 @@
 // Story 3 : l'outil explique l'événement et ce qu'il a cherché chez les
-// clients ; le commercial relit, puis valide (écran « Sujet creusé par l'IA »
-// de la maquette v1). En attendant l'API ou un LLM, ces textes sont préparés
+// clients ; le commercial relit, puis choisit les clients (écran « Sujet »
+// de la maquette v6). En attendant l'API ou un LLM, ces textes sont préparés
 // par l'équipe, un par événement (scénario et API). Les nombres (produits,
 // clients) ne sont pas écrits ici : l'écran les calcule sur les données.
 

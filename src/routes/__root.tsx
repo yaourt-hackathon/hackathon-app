@@ -33,7 +33,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      <body className="min-h-dvh bg-background text-foreground antialiased">
         {children}
         {/* Une seule région de notifications pour toute l'app */}
         <Toast.Provider />
