@@ -17,7 +17,7 @@ services:
     # Dépôt data épinglé sur un commit : l'app est testée contre cette version
     # de l'API, pas contre develop qui bouge chaque nuit. Changer de version :
     # remplacer le commit, puis `npm run api:pull` si le contrat a changé.
-    build: https://github.com/yaourt-hackathon/data.git#33613cfe97a5eca4c513835946a84a58d97544a3
+    build: https://github.com/yaourt-hackathon/data.git#05991a7feeaea343b3de3017c1e090c1947701be
     ports:
       # Pour `npm run dev` hors conteneur (DATA_API_URL=http://localhost:8000)
       - '127.0.0.1:${DATA_API_PORT:-8000}:8000'
