@@ -48,7 +48,9 @@ export function FicheAppel({
   const appel = trouverAppel(tournee.appels, compteId) as AppelClient;
   // La liste générée, ou toute la tournée si ce client n'y est pas
   const choisis = appelsChoisis(tournee.appels, clients);
-  const liste = choisis.includes(appel) ? choisis : tournee.appels;
+  const dansLaSelection = choisis.includes(appel);
+  const liste = dansLaSelection ? choisis : tournee.appels;
+  const selection = dansLaSelection ? clients : undefined;
   const position = liste.indexOf(appel) + 1;
   const suivant = liste[position];
   const argumentsSources = argumentsAppel(appel, reformulation);
@@ -64,7 +66,7 @@ export function FicheAppel({
           <Retour
             to="/evenements/$evenementId/appels"
             params={{ evenementId }}
-            search={{ clients }}
+            search={{ clients: selection }}
           >
             Liste
           </Retour>
@@ -79,8 +81,11 @@ export function FicheAppel({
           position === 1 ? 'À appeler en premier' : `À appeler en ${position}e`
         }
       />
-      <Contenu>
-        <PhraseAppel key={appel.compte_id} appel={appel} />
+      {/* key : le client suivant repart du haut, sur le premier onglet, avec
+          sa phrase d'origine (le volet ne fait pas défiler la page, donc le
+          router n'a rien à remettre en haut) */}
+      <Contenu key={appel.compte_id}>
+        <PhraseAppel appel={appel} />
         <Onglets
           label="Pour tenir l'échange"
           onglets={[
@@ -108,7 +113,7 @@ export function FicheAppel({
                     </Chip>
                   </div>
                   {a.ingredients && (
-                    <p className="flex flex-wrap items-center gap-1.5 rounded-lg bg-background p-2.5 text-[11px] leading-[18px] text-muted uppercase">
+                    <p className="flex flex-wrap items-center gap-1.5 rounded-lg bg-background p-2.5 text-[11px] leading-[18px] uppercase">
                       <span>Ingrédients :</span>
                       {a.ingredients.map((i, n, tous) => (
                         // Une virgule entre les ingrédients, surlignés compris,
@@ -215,7 +220,7 @@ export function FicheAppel({
           <Link
             to="/evenements/$evenementId/appels/$compteId"
             params={{ evenementId, compteId: suivant.compte_id }}
-            search={{ clients }}
+            search={{ clients: selection }}
             className={buttonVariants({ variant: 'ghost', className: 'gap-1' })}
           >
             Client suivant
@@ -225,7 +230,7 @@ export function FicheAppel({
           <Link
             to="/evenements/$evenementId/appels"
             params={{ evenementId }}
-            search={{ clients }}
+            search={{ clients: selection }}
             className={buttonVariants({ variant: 'ghost' })}
           >
             Retour à la liste

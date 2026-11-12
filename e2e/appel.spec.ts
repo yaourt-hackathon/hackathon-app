@@ -30,11 +30,14 @@ test('la fiche : la phrase, sa source, la question, puis les onglets', async ({
   const args = page.getByRole('tabpanel', { name: /^Arguments · \d+$/ });
   await expect(args.getByText('Étiquette du produit')).toBeVisible();
   await expect(args).toContainText(/Règlement \(UE\) 2023\/1545/);
+  // Les onglets inactifs ne sont pas dans la page : chacun est relu
+  await sansMotInterdit(page);
 
   await page.getByRole('tab', { name: 'Pour relancer' }).click();
   await expect(
     page.getByRole('tabpanel', { name: 'Pour relancer' }).getByRole('listitem'),
   ).not.toHaveCount(0);
+  await sansMotInterdit(page);
   await page.getByRole('tab', { name: 'Pourquoi ce client ?' }).click();
   await expect(
     page.getByRole('tabpanel', { name: 'Pourquoi ce client ?' }),
@@ -107,14 +110,62 @@ test("« Marquer comme appelé » compte l'appel dans la liste", async ({
   await page.getByRole('link', { name: 'Liste' }).click();
   await expect(page.getByText(/^1 appel passé sur \d+$/)).toBeVisible();
   await expect(page.getByText('Appelé', { exact: true })).toBeVisible();
+
+  // Un clic de trop se rattrape : l'appel n'est plus compté
+  await page
+    .getByRole('list', { name: 'Clients à appeler' })
+    .getByRole('link')
+    .first()
+    .click();
+  await marquer.click();
+  await expect(marquer).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('link', { name: 'Liste' }).click();
+  await expect(page.getByText(/^0 appel passé sur \d+$/)).toBeVisible();
 });
 
-test('« Client suivant » ouvre la fiche du suivant', async ({ page }) => {
-  await ouvrirFiche(page);
+test('« Client suivant » suit la sélection, repart du haut et du premier onglet', async ({
+  page,
+}) => {
+  // Une sélection sans le premier client : la fiche suit la liste générée
+  await page.goto('/evenements/EVT-001/clients', { waitUntil: 'networkidle' });
+  await page
+    .getByRole('group', { name: 'Clients à appeler' })
+    .locator('label')
+    .first()
+    .click();
+  await page.getByRole('link', { name: "Générer la liste d'appels" }).click();
+  await expect(page).toHaveURL(/\/appels\?clients=/);
+  const liens = page
+    .getByRole('list', { name: 'Clients à appeler' })
+    .getByRole('link');
+  // L'URL change avant le rendu de la liste : on attend ses liens
+  await expect(liens.first()).toBeVisible();
+  const nb = await liens.count();
+  await liens.first().click();
+  await expect(page.getByText(`Appel 1 sur ${nb}`)).toBeVisible();
+
   const fait = (await texte(page, 'fait').textContent()) ?? '';
+  await page.getByRole('tab', { name: 'Pourquoi ce client ?' }).click();
+  const contenu = page.locator('main > div.overflow-y-auto');
+  await contenu.evaluate((el) => el.scrollTo(0, el.scrollHeight));
   await page.getByRole('link', { name: 'Client suivant' }).click();
-  await expect(page.getByText(/^Appel 2 sur \d+$/)).toBeVisible();
+
+  await expect(page.getByText(`Appel 2 sur ${nb}`)).toBeVisible();
+  await expect(page).toHaveURL(/\?clients=/);
   await expect(texte(page, 'fait')).not.toHaveText(fait);
+  await expect(page.getByRole('tab', { name: /^Arguments/ })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  expect(await contenu.evaluate((el) => el.scrollTop)).toBe(0);
+
+  // Le dernier client ramène à la liste
+  for (let i = 2; i < nb; i++) {
+    await page.getByRole('link', { name: 'Client suivant' }).click();
+  }
+  await expect(page.getByText(`Appel ${nb} sur ${nb}`)).toBeVisible();
+  await page.getByRole('link', { name: 'Retour à la liste' }).click();
+  await expect(page).toHaveURL(/\/appels\?clients=/);
 });
 
 test("l'adresse d'un appel ouvre sa fiche, sans tenir compte de la casse", async ({

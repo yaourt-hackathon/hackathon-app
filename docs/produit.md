@@ -54,7 +54,7 @@ Le parcours du KAM, dans l'ordre. Les six stories **Must** forment la démo ; l'
     - les relances ;
     - pourquoi ce client.
 - Should faits : copier la phrase d'appel, ouvrir la source, modifier le fait ou la question (pour cet appel, rien n'est enregistré).
-- En plus, simulés et dits à l'écran : « Marquer comme appelé » et son compteur, perdus au rechargement.
+- En plus, simulés et dits à l'écran : « Marquer comme appelé » et son compteur, perdus au rechargement ou en quittant le sujet.
 - Reste à faire :
   - saisir soi-même un événement ;
   - « Corriger » (discuter du sujet avec l'IA), masqué pour l'instant ;

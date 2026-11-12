@@ -17,6 +17,7 @@ import {
   Retour,
   Volet,
 } from '@/features/tournee/components/Volet';
+import { PiedDonnees } from '@/features/tournee/components/PiedDonnees';
 import { compter } from '@/features/tournee/format';
 import { tourneeQuery } from '@/features/tournee/queries';
 import { appelsChoisis, parametreClients } from '@/features/tournee/selection';
@@ -107,6 +108,11 @@ export function ChoixClients({
             ))}
           </CheckboxGroup>
         </div>
+        <PiedDonnees
+          mode={tournee.mode}
+          dateMaj={tournee.date_maj}
+          crmFictif={tournee.crm_fictif}
+        />
       </Contenu>
       <Actions>
         <p className="text-[13px] text-muted">

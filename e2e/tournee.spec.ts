@@ -13,12 +13,21 @@ test('le sujet en onglets, le choix des clients, puis les appels classés 1…n'
   for (const section of ['Ce qui change', 'Chez vos clients']) {
     await expect(page.getByRole('heading', { name: section })).toBeVisible();
   }
-  await expect(page.getByText(/à relire avant de valider/)).toBeVisible();
+  await expect(
+    page.getByText(/à relire avant de choisir les clients/),
+  ).toBeVisible();
+  await sansMotInterdit(page);
   await page.getByRole('tab', { name: "Ce que l'IA a lu" }).click();
   for (const section of ["Ce que l'IA a lu", "Ce que l'IA a cherché"]) {
     await expect(page.getByRole('heading', { name: section })).toBeVisible();
   }
   await expect(page.getByText(/^Compris : /)).toBeVisible();
+  await sansMotInterdit(page);
+  await page.getByRole('tab', { name: 'À vérifier' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Ce qui reste à vérifier' }),
+  ).toBeVisible();
+  await sansMotInterdit(page);
 
   await page.getByRole('link', { name: 'Choisir les clients' }).click();
   await expect(page).toHaveURL(/\/evenements\/EVT-001\/clients$/);
