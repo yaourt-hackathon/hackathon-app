@@ -1,16 +1,19 @@
 import { expect, test } from '@playwright/test';
 import { modeDonnees, sansMotInterdit } from './outils';
 
-test("la veille liste les événements, échéance la plus proche d'abord", async ({
+test("les sujets du jour, l'échéance la plus proche d'abord", async ({
   page,
   request,
 }) => {
   const mode = await modeDonnees(request);
   await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    /^[A-Z][a-zé]+ \d{1,2} [a-zéû]+$/,
+  );
   await expect(
-    page.getByRole('heading', { level: 1, name: 'Événements détectés' }),
+    page.getByText(/sujets? repérés? pour vos clients/),
   ).toBeVisible();
-  await expect(page.getByText('Veille préparée à la main')).toBeVisible();
+  await expect(page.getByText(/^Veille (préparée|de l'API)/)).toBeVisible();
   // Le mode affiché est celui que la sonde annonce
   await expect(
     page.getByText(mode === 'demo' ? 'Données de démo' : 'API data', {
@@ -18,33 +21,41 @@ test("la veille liste les événements, échéance la plus proche d'abord", asyn
     }),
   ).toBeVisible();
 
-  const cartes = page
-    .getByRole('list', { name: 'Événements détectés' })
-    .getByRole('listitem');
-  await expect(cartes.first()).toBeVisible();
-  for (const carte of await cartes.all()) {
-    await expect(
-      carte.getByText(/^(Fait réel|Événement fictif)$/),
-    ).toBeVisible();
-    await expect(carte).toContainText(/client(s)? à appeler/);
-    await expect(carte).toContainText(/Source : /);
-  }
+  const principal = page.getByRole('article');
+  await expect(principal).toContainText(/produits? touchés?/);
+  await expect(principal).toContainText(/clients? à appeler/);
+  await expect(
+    principal.getByText(/^(Fait réel|Événement fictif)$/),
+  ).toBeVisible();
 
   // Sans échéance (attribut vide) : à la fin
   const echeances = await page
     .locator('[data-echeance]')
     .evaluateAll((els) => els.map((e) => e.getAttribute('data-echeance')));
+  expect(echeances.length).toBeGreaterThan(1);
   const cles = echeances.map((e) => e || '9999-12-31');
   expect(cles).toEqual([...cles].sort());
   await sansMotInterdit(page);
 });
 
-test('une carte ouvre son événement, cliquée hors de son titre', async ({
-  page,
-}) => {
+test('« Lire le sujet » ouvre le sujet principal', async ({ page }) => {
+  await page.goto('/');
+  const titre =
+    (await page.getByRole('article').getByRole('heading').textContent()) ?? '';
+  await page.getByRole('link', { name: 'Lire le sujet' }).click();
+
+  await expect(page).toHaveURL(/\/evenements\/[^/]+$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(titre);
+  await sansMotInterdit(page);
+
+  await page.getByRole('link', { name: 'Accueil' }).click();
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test("un autre sujet s'ouvre, cliqué hors de son titre", async ({ page }) => {
   await page.goto('/');
   const carte = page
-    .getByRole('list', { name: 'Événements détectés' })
+    .getByRole('region', { name: /autres? sujets? du jour/ })
     .getByRole('listitem')
     .first();
   const titre = (await carte.getByRole('link').textContent()) ?? '';
@@ -54,11 +65,6 @@ test('une carte ouvre son événement, cliquée hors de son titre', async ({
 
   await expect(page).toHaveURL(/\/evenements\/[^/]+$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(titre);
-  await expect(page.getByText(/^Source :/)).toBeVisible();
-  await sansMotInterdit(page);
-
-  await page.getByRole('link', { name: '← Événements détectés' }).click();
-  await expect(page).toHaveURL(/\/$/);
 });
 
 test('un événement inconnu répond 404 « Introuvable »', async ({ page }) => {

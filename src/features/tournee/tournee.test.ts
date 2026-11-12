@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { construireTournee, resumerProduits } from '@/features/tournee/tournee';
+import {
+  avecEtiquettes,
+  chiffresTournee,
+  construireTournee,
+  produitsEnTete,
+} from '@/features/tournee/tournee';
 import type {
   Appel,
   Compte,
@@ -167,28 +172,45 @@ describe('construireTournee', () => {
   });
 });
 
-describe('resumerProduits', () => {
-  it('cite les premiers produits et compte les autres', () => {
-    const resume = resumerProduits(
-      [
-        produit('a', 'probable', ['lavande'], ['linalool']),
-        produit('b', 'possible', [], ['linalool']),
-        produit('c', 'possible', [], ['limonene']),
-      ],
-      2,
-    );
-    expect(resume).toEqual({
-      produits: [
-        { nom: 'a', ingredients: ['lavande'] },
-        { nom: 'b', ingredients: ['linalool'] },
-      ],
-      autres: 1,
-    });
+describe('étiquettes et chiffres', () => {
+  const tournee = construireTournee(
+    'demo',
+    liste([appel('C1', 1), appel('C2', 2)]),
+    [
+      compte('C1', [
+        touche('EVT-001', [
+          produit('possible', 'possible'),
+          produit('tete', 'probable', ['lavande']),
+        ]),
+      ]),
+      null,
+    ],
+  );
+
+  it("cherche l'étiquette du premier produit de chaque appel", () => {
+    // Probable d'abord : « tete » passe devant « possible »
+    expect(produitsEnTete(tournee)).toEqual(['tete']);
+    const avec = avecEtiquettes(tournee, { tete: 'Aqua, Lavandula Oil' });
+    expect(avec.appels.map((a) => a.etiquette)).toEqual([
+      'Aqua, Lavandula Oil',
+      null,
+    ]);
   });
 
-  it('ne compte aucun autre produit quand tout est cité', () => {
-    expect(resumerProduits([produit('a', 'probable', ['rose'])]).autres).toBe(
-      0,
-    );
+  it('compte produits et clients, et nomme le plus touché', () => {
+    // Le rang 2 est le plus touché : le rang suit le score, pas le nombre
+    const appels = tournee.appels.map((a, i) => ({
+      ...a,
+      nb_probable: i === 0 ? 1 : 3,
+      nb_possible: 1,
+      nb_produits_analyses: 10,
+    }));
+    expect(chiffresTournee(appels)).toEqual({
+      nb_clients: 2,
+      nb_produits_touches: 6,
+      nb_produits_analyses: 20,
+      plus_touche: { nom: 'C2', nb_produits: 4 },
+    });
+    expect(chiffresTournee([]).plus_touche).toBeNull();
   });
 });

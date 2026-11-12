@@ -20,7 +20,13 @@ const evenement = (
 });
 
 const appel = (compte_id: string, statut: Appel['statut']) =>
-  ({ compte_id, statut }) as Appel;
+  ({
+    compte_id,
+    statut,
+    nb_probable: 2,
+    nb_possible: 1,
+    nb_produits_analyses: 10,
+  }) as Appel;
 
 const appels = (clients: number, prospects: number): ListeAppels =>
   ({
@@ -42,6 +48,19 @@ describe('resumerVeille', () => {
     );
     expect(veille.evenements[0]?.nb_clients).toBe(2);
     expect(veille.evenements[0]).not.toHaveProperty('nb_comptes_a_appeler');
+  });
+
+  it('compte produits touchés, probables et analysés sur les clients seuls', () => {
+    const veille = resumerVeille(
+      { date_maj: '2026-11-12', evenements: [evenement('A', '2027-01-01')] },
+      [appels(2, 5)],
+    );
+    expect(veille.evenements[0]).toMatchObject({
+      nb_clients: 2,
+      nb_produits_touches: 6,
+      nb_produits_probables: 4,
+      nb_produits_analyses: 20,
+    });
   });
 
   it("compte zéro client quand la liste d'appels manque", () => {

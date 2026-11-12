@@ -41,11 +41,11 @@ Le parcours du KAM, dans l'ordre. Les six stories **Must** forment la démo ; l'
 
 ## Ce qui existe
 
-- Dans l'app, les six Must :
-  - `/` : les événements détectés (stories 1 et 2) ;
-  - `/evenements/$evenementId` : la reformulation à valider, puis les clients à appeler (stories 3 à 5) ;
-  - `/evenements/$evenementId/appels/$compteId` : la raison d'appeler et les produits touchés (story 6).
-- Should faits : copier la raison d'appeler, ouvrir la source, modifier le fait ou la question (pour cet appel, rien n'est enregistré). Reste à faire : saisir soi-même un événement.
+- Dans l'app, les six Must, sous la forme du volet de la [maquette v1](https://www.figma.com/design/Wn4wWNsf8bvSYNAlKy5qXk/Maquette?node-id=61-1834) (640 px, comme ouvert à côté de Pegasus) :
+  - `/` « Sujets du jour » : le sujet principal (échéance la plus proche), puis les autres (stories 1 et 2) ;
+  - `/evenements/$evenementId` « Sujet creusé par l'IA » : ce qui change, ce que l'IA a lu et cherché, chez vos clients, pourquoi appeler maintenant, ce qui reste à vérifier, puis « Valider » (story 3) ;
+  - `/evenements/$evenementId/appels` « Appels du jour » : les clients en accordéon, classés, chacun avec sa phrase d'appel, ses arguments sourcés (dont la liste d'ingrédients de l'étiquette, en démo) et ses relances (stories 4 à 6).
+- Should faits : copier la phrase d'appel, ouvrir la source, modifier le fait ou la question (pour cet appel, rien n'est enregistré). En plus, simulés et dits à l'écran : « Marquer comme appelé » et son compteur, le tri. Reste à faire : saisir soi-même un événement, et « Corriger » (discuter du sujet avec l'IA), masqué pour l'instant.
 - Données : un scénario de démo embarqué (`DATA_SOURCE=demo`, par défaut) ou l'API data (`DATA_SOURCE=api`), au choix ([ADR 0008](adr/0008-source-de-donnees-commutable.md)). Le scénario reprend `EVT-001` de l'API et ajoute deux événements fictifs, `DEMO-01` (lavande) et `DEMO-02` (rose).
 - Hors du parcours : `/marques` (marques par urgence) et `/marques/$id` (produits, niveau, substances, source), sur les allergènes UE 2023/1545.
 - Dans l'API data v0.4.0, lancée par `compose.yaml` : les routes du tableau ci-dessus, copiées dans `openapi/data-api.json`.

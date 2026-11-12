@@ -1,11 +1,8 @@
 import type { Libelle } from '@/components/Pastille';
 import type { ModeDonnees } from '@/features/tournee/donnees/source';
-import type {
-  Critere,
-  Reformulation,
-} from '@/features/tournee/reformulation/preparees';
+import type { Reformulation } from '@/features/tournee/reformulation/preparees';
 import type { OrigineTexte } from '@/features/tournee/tournee';
-import type { Appel, Evenement, ProduitTouche } from '@/lib/data-api/generated';
+import type { Evenement } from '@/lib/data-api/generated';
 
 const types: Record<string, string> = {
   reglementation: 'Réglementation',
@@ -27,19 +24,7 @@ export const libelleStatut: Record<Evenement['statut_validation'], Libelle> = {
 
 export const libelleMode: Record<ModeDonnees, Libelle> = {
   demo: { texte: 'Données de démo', couleur: 'warning' },
-  api: { texte: 'API data', couleur: 'accent' },
-};
-
-export const libelleCritere: Record<Critere['type'], Libelle> = {
-  direct: { texte: 'Ingrédient visé', couleur: 'accent' },
-  indice: { texte: 'Ingrédient proche', couleur: 'default' },
-};
-
-// faible : moins de 10 produits analysés ; bonne : 20 ou plus (API data)
-export const libelleConfiance: Record<Appel['confiance'], Libelle> = {
-  faible: { texte: 'Confiance faible', couleur: 'warning' },
-  moyenne: { texte: 'Confiance moyenne', couleur: 'default' },
-  bonne: { texte: 'Confiance bonne', couleur: 'success' },
+  api: { texte: 'API data', couleur: 'success' },
 };
 
 /** Qui a écrit un texte montré au commercial : il valide chaque sortie. */
@@ -53,14 +38,7 @@ export const libelleOrigineReformulation: Record<
   Reformulation['origine'],
   string
 > = {
-  preparee: "Texte préparé par l'équipe, en attendant l'IA",
-  api: "Critères de l'API data",
-  llm: "Rédigé par l'IA : à vérifier avant de valider",
-};
-
-// « Exposition probable », jamais « non-conformité » : une étiquette publique
-// ne donne pas les concentrations (docs/produit.md)
-export const libelleNiveau: Record<ProduitTouche['niveau'], Libelle> = {
-  probable: { texte: 'Exposition probable', couleur: 'danger' },
-  possible: { texte: 'Exposition possible', couleur: 'warning' },
+  preparee: "Préparé par l'équipe en attendant l'IA, à relire avant de valider",
+  api: "Écrit à partir de l'API data, à relire avant de valider",
+  llm: "Rédigé par l'IA, à relire avant de valider",
 };
