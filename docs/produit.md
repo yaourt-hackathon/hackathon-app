@@ -14,7 +14,7 @@
 ## Règles qui s'imposent au code
 
 - Pas un CRM : ni liste à tenir, ni fiche à remplir, ni suivi d'échanges.
-- Pas un outil de plus. Givaudan, réponse du 12/11 : « Le véritable enjeu n'est donc pas d'ajouter de nouveaux outils, mais de simplifier les processus existants, d'éviter les saisies répétitives. » L'équipe en conclut : dire comment la liste d'appels s'insère dans Pegasus, leur outil commercial, même si le prototype est autonome.
+- Pas un outil de plus. Givaudan, réponses du 12/11 : « La principale opportunité réside dans l'intégration de l'IA aux processus commerciaux existants, plutôt que dans la multiplication d'outils indépendants. » Et, plus loin : « Le véritable enjeu n'est donc pas d'ajouter de nouveaux outils, mais de simplifier les processus existants, d'éviter les saisies répétitives et de faciliter la circulation des informations entre les différentes plateformes. » L'équipe en conclut : dire comment la liste d'appels s'insère dans Pegasus, leur outil commercial, même si le prototype est autonome.
 - Un fait, puis une question. Jamais de promesse de solution.
 - L'outil prépare, le commercial mène l'échange et valide chaque sortie de l'IA.
 - Des entreprises, pas des personnes (RGPD). Un commercial est un code (`KAM-01`), jamais un nom.
