@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "API Note de tête",
-    "description": "Équipe 7 · Yaourt — d'un événement à une liste d'appels de clients et de prospects. Les comptes, leur statut et les ventes sont fictifs. Données réelles Open Beauty Facts. Liste d'allergènes provisoire, à vérifier sur EUR-Lex. On parle d'« exposition probable », jamais de « non-conformité ».",
+    "description": "Équipe 7 · Yaourt — d'un événement à une liste d'appels de clients et de prospects. Les comptes, leur statut et les ventes sont fictifs : ils s'inspirent de Pegasus, le CRM des commerciaux, et d'un export d'ERP, sans décrire aucune relation réelle. Données réelles Open Beauty Facts. Liste d'allergènes provisoire, à vérifier sur EUR-Lex. On parle d'« exposition probable », jamais de « non-conformité ».",
     "version": "0.4.0"
   },
   "paths": {
@@ -274,11 +274,17 @@
             "title": "Question",
             "description": "La question à poser"
           },
+          "arguments": {
+            "type": "string",
+            "title": "Arguments",
+            "description": "Arguments rédigés par le LLM local et relus. Vide tant qu'aucun n'est validé",
+            "default": ""
+          },
           "origine_textes": {
             "type": "string",
             "enum": ["gabarit", "llm_valide"],
             "title": "Origine Textes",
-            "description": "gabarit : écrit par le code. llm_valide : écrit par le LLM local et relu par une personne"
+            "description": "Origine du champ « fait ». gabarit : écrit par le code. llm_valide : écrit par le LLM local et relu par une personne. La question peut avoir une autre origine"
           },
           "nb_produits_analyses": {
             "type": "integer",
@@ -452,8 +458,54 @@
         "properties": {
           "evenement_id": { "type": "string", "title": "Evenement Id" },
           "titre": { "type": "string", "title": "Titre" },
+          "source_nom": {
+            "type": "string",
+            "title": "Source Nom",
+            "description": "Le texte ou l'actualité d'où vient le fait",
+            "default": "",
+            "examples": ["Règlement (UE) 2023/1545"]
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url",
+            "description": "À ouvrir depuis la fiche compte pour vérifier le fait",
+            "default": ""
+          },
+          "date_echeance": {
+            "type": "string",
+            "title": "Date Echeance",
+            "description": "Échéance de l'événement, vide s'il n'y en a pas",
+            "default": "",
+            "examples": ["2028-07-31"]
+          },
           "rang": { "type": "integer", "title": "Rang" },
           "score": { "type": "integer", "title": "Score" },
+          "nb_probable": {
+            "type": "integer",
+            "title": "Nb Probable",
+            "description": "Produits du compte en exposition probable pour cet événement",
+            "default": 0
+          },
+          "nb_possible": {
+            "type": "integer",
+            "title": "Nb Possible",
+            "description": "Produits du compte en exposition possible pour cet événement",
+            "default": 0
+          },
+          "confiance": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "bonne"],
+            "title": "Confiance",
+            "description": "faible sous 10 produits analysés, bonne à partir de 20",
+            "default": "faible"
+          },
+          "origine_textes": {
+            "type": "string",
+            "enum": ["gabarit", "llm_valide"],
+            "title": "Origine Textes",
+            "description": "Origine du champ « fait »",
+            "default": "gabarit"
+          },
           "fait": { "type": "string", "title": "Fait" },
           "question": { "type": "string", "title": "Question" },
           "produits": {
@@ -700,6 +752,12 @@
             "type": "string",
             "title": "Reference Parfum",
             "description": "Référence fictive du parfum vendu pour ce produit, vide sinon"
+          },
+          "ingredients": {
+            "type": "string",
+            "title": "Ingredients",
+            "description": "L'étiquette telle qu'elle est publiée. Y surligner les elements_directs montre ce que le code a lu",
+            "default": ""
           }
         },
         "type": "object",
