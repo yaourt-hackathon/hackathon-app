@@ -20,6 +20,8 @@ export default defineConfig(
     '**/.venv/',
     'src/routeTree.gen.ts',
     'src/lib/data-api/generated/',
+    'playwright-report/',
+    'test-results/',
   ]),
   eslint.configs.recommended,
   // Règles qui lisent les types : promesses oubliées, any implicites…
