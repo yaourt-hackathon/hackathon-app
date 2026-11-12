@@ -1,0 +1,16 @@
+# Le build part des sources et du lockfile ; tout le reste se régénère
+.git
+node_modules
+.env
+.env.*
+.scratch
+consigne
+dist
+.output
+.nitro
+.tanstack
+src/lib/data-api/generated
+playwright-report
+test-results
+*.log
+.DS_Store

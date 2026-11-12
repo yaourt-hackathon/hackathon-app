@@ -1,0 +1,844 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API Note de tête",
+    "description": "Équipe 7 · Yaourt — d'un événement à une liste d'appels de clients et de prospects. Les comptes, leur statut et les ventes sont fictifs : ils s'inspirent de Pegasus, le CRM des commerciaux, et d'un export d'ERP, sans décrire aucune relation réelle. Données réelles Open Beauty Facts. Liste d'allergènes provisoire, à vérifier sur EUR-Lex. On parle d'« exposition probable », jamais de « non-conformité ».",
+    "version": "0.4.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Technique"],
+        "summary": "Health",
+        "description": "Vérifie que l'API répond et que les données sont là.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Sante" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marques": {
+      "get": {
+        "tags": ["Exposition"],
+        "summary": "Marques",
+        "description": "Marques suivies, triées par nombre de produits « probable ».",
+        "operationId": "marques_marques_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListeMarques" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exposition": {
+      "get": {
+        "tags": ["Exposition"],
+        "summary": "Exposition",
+        "description": "Diagnostic d'une marque, avec chaque produit, son niveau et la substance trouvée.",
+        "operationId": "exposition_exposition_get",
+        "parameters": [
+          {
+            "name": "marque",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Identifiant de la marque",
+              "examples": ["florame"],
+              "title": "Marque"
+            },
+            "description": "Identifiant de la marque"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Exposition" }
+              }
+            }
+          },
+          "404": {
+            "description": "Marque inconnue",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evenements": {
+      "get": {
+        "tags": ["Liste d'appels"],
+        "summary": "Evenements",
+        "description": "Les événements calculés. Un événement n'apparaît ici qu'après validation par une personne.",
+        "operationId": "evenements_evenements_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListeEvenements" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evenements/{evenement_id}/appels": {
+      "get": {
+        "tags": ["Liste d'appels"],
+        "summary": "Appels Evenement",
+        "description": "La liste d'appels d'un événement : les clients, puis les prospects, chacun classé avec sa raison.",
+        "operationId": "appels_evenement_evenements__evenement_id__appels_get",
+        "parameters": [
+          {
+            "name": "evenement_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Evenement Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListeAppels" }
+              }
+            }
+          },
+          "404": {
+            "description": "Événement inconnu",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comptes/{compte_id}": {
+      "get": {
+        "tags": ["Liste d'appels"],
+        "summary": "Compte",
+        "description": "La fiche d'un compte : ses marques, et pour chaque événement qui le touche, les produits concernés.",
+        "operationId": "compte_comptes__compte_id__get",
+        "parameters": [
+          {
+            "name": "compte_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Compte Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Compte" }
+              }
+            }
+          },
+          "404": {
+            "description": "Compte inconnu",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          },
+          "503": {
+            "description": "Données absentes : lancer le pipeline",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Erreur" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Appel": {
+        "properties": {
+          "rang": {
+            "type": "integer",
+            "title": "Rang",
+            "description": "Rang dans son groupe (clients ou prospects)"
+          },
+          "compte_id": {
+            "type": "string",
+            "title": "Compte Id",
+            "examples": ["CPT-001"]
+          },
+          "nom_compte": { "type": "string", "title": "Nom Compte" },
+          "statut": {
+            "type": "string",
+            "enum": ["client", "prospect"],
+            "title": "Statut",
+            "description": "Fictif : inventé pour la démonstration"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score",
+            "description": "5 x probable (max 10) + 2 x possible (max 10) + 30 x part de probable"
+          },
+          "raison_classement": {
+            "type": "string",
+            "title": "Raison Classement",
+            "description": "Phrase écrite par le code à partir des nombres"
+          },
+          "fait": {
+            "type": "string",
+            "title": "Fait",
+            "description": "Le fait à dire au client, avec sa source"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question",
+            "description": "La question à poser"
+          },
+          "arguments": {
+            "type": "string",
+            "title": "Arguments",
+            "description": "Arguments rédigés par le LLM local et relus. Vide tant qu'aucun n'est validé",
+            "default": ""
+          },
+          "origine_textes": {
+            "type": "string",
+            "enum": ["gabarit", "llm_valide"],
+            "title": "Origine Textes",
+            "description": "Origine du champ « fait ». gabarit : écrit par le code. llm_valide : écrit par le LLM local et relu par une personne. La question peut avoir une autre origine"
+          },
+          "nb_produits_analyses": {
+            "type": "integer",
+            "title": "Nb Produits Analyses"
+          },
+          "nb_probable": { "type": "integer", "title": "Nb Probable" },
+          "nb_possible": { "type": "integer", "title": "Nb Possible" },
+          "part_probable": { "type": "number", "title": "Part Probable" },
+          "confiance": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "bonne"],
+            "title": "Confiance",
+            "description": "faible si moins de 10 produits analysés, bonne à partir de 20"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rang",
+          "compte_id",
+          "nom_compte",
+          "statut",
+          "score",
+          "raison_classement",
+          "fait",
+          "question",
+          "origine_textes",
+          "nb_produits_analyses",
+          "nb_probable",
+          "nb_possible",
+          "part_probable",
+          "confiance"
+        ],
+        "title": "Appel"
+      },
+      "Compte": {
+        "properties": {
+          "date_maj": { "type": "string", "title": "Date Maj" },
+          "crm_fictif": { "type": "boolean", "title": "Crm Fictif" },
+          "compte_id": { "type": "string", "title": "Compte Id" },
+          "nom_compte": { "type": "string", "title": "Nom Compte" },
+          "statut": {
+            "type": "string",
+            "enum": ["client", "prospect"],
+            "title": "Statut"
+          },
+          "pays": { "type": "string", "title": "Pays" },
+          "segment": { "type": "string", "title": "Segment" },
+          "commercial": {
+            "type": "string",
+            "title": "Commercial",
+            "description": "Un code, jamais un nom de personne",
+            "examples": ["KAM-01"]
+          },
+          "dernier_contact": { "type": "string", "title": "Dernier Contact" },
+          "marques": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Marques"
+          },
+          "nb_produits_analyses": {
+            "type": "integer",
+            "title": "Nb Produits Analyses"
+          },
+          "classe_ca": {
+            "type": "string",
+            "title": "Classe Ca",
+            "description": "A, B ou C. Fictif. Vide pour un prospect"
+          },
+          "nb_parfums": {
+            "type": "integer",
+            "title": "Nb Parfums",
+            "description": "Parfums vendus au compte (fictif)"
+          },
+          "quantite_kg_annee": {
+            "type": "integer",
+            "title": "Quantite Kg Annee",
+            "description": "Quantité vendue la dernière année (fictif)"
+          },
+          "evenements": {
+            "items": { "$ref": "#/components/schemas/EvenementCompte" },
+            "type": "array",
+            "title": "Evenements"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date_maj",
+          "crm_fictif",
+          "compte_id",
+          "nom_compte",
+          "statut",
+          "pays",
+          "segment",
+          "commercial",
+          "dernier_contact",
+          "marques",
+          "nb_produits_analyses",
+          "classe_ca",
+          "nb_parfums",
+          "quantite_kg_annee",
+          "evenements"
+        ],
+        "title": "Compte"
+      },
+      "Erreur": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "examples": ["Marque inconnue : xyz"]
+          }
+        },
+        "type": "object",
+        "required": ["detail"],
+        "title": "Erreur"
+      },
+      "Evenement": {
+        "properties": {
+          "evenement_id": {
+            "type": "string",
+            "title": "Evenement Id",
+            "examples": ["EVT-001"]
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "examples": ["reglementation"]
+          },
+          "titre": { "type": "string", "title": "Titre" },
+          "resume": { "type": "string", "title": "Resume" },
+          "source_nom": {
+            "type": "string",
+            "title": "Source Nom",
+            "examples": ["Règlement (UE) 2023/1545"]
+          },
+          "source_url": { "type": "string", "title": "Source Url" },
+          "date_publication": { "type": "string", "title": "Date Publication" },
+          "date_echeance": {
+            "type": "string",
+            "title": "Date Echeance",
+            "description": "Vide s'il n'y a pas d'échéance"
+          },
+          "statut_validation": {
+            "type": "string",
+            "enum": ["valide", "test"],
+            "title": "Statut Validation",
+            "description": "« test » : événement d'essai, pas un fait réel"
+          },
+          "nb_comptes_a_appeler": {
+            "type": "integer",
+            "title": "Nb Comptes A Appeler",
+            "description": "Comptes présents dans la liste d'appels",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "evenement_id",
+          "type",
+          "titre",
+          "resume",
+          "source_nom",
+          "source_url",
+          "date_publication",
+          "date_echeance",
+          "statut_validation"
+        ],
+        "title": "Evenement"
+      },
+      "EvenementCompte": {
+        "properties": {
+          "evenement_id": { "type": "string", "title": "Evenement Id" },
+          "titre": { "type": "string", "title": "Titre" },
+          "source_nom": {
+            "type": "string",
+            "title": "Source Nom",
+            "description": "Le texte ou l'actualité d'où vient le fait",
+            "default": "",
+            "examples": ["Règlement (UE) 2023/1545"]
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url",
+            "description": "À ouvrir depuis la fiche compte pour vérifier le fait",
+            "default": ""
+          },
+          "date_echeance": {
+            "type": "string",
+            "title": "Date Echeance",
+            "description": "Échéance de l'événement, vide s'il n'y en a pas",
+            "default": "",
+            "examples": ["2028-07-31"]
+          },
+          "rang": { "type": "integer", "title": "Rang" },
+          "score": { "type": "integer", "title": "Score" },
+          "nb_probable": {
+            "type": "integer",
+            "title": "Nb Probable",
+            "description": "Produits du compte en exposition probable pour cet événement",
+            "default": 0
+          },
+          "nb_possible": {
+            "type": "integer",
+            "title": "Nb Possible",
+            "description": "Produits du compte en exposition possible pour cet événement",
+            "default": 0
+          },
+          "confiance": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "bonne"],
+            "title": "Confiance",
+            "description": "faible sous 10 produits analysés, bonne à partir de 20",
+            "default": "faible"
+          },
+          "origine_textes": {
+            "type": "string",
+            "enum": ["gabarit", "llm_valide"],
+            "title": "Origine Textes",
+            "description": "Origine du champ « fait »",
+            "default": "gabarit"
+          },
+          "fait": { "type": "string", "title": "Fait" },
+          "question": { "type": "string", "title": "Question" },
+          "produits": {
+            "items": { "$ref": "#/components/schemas/ProduitTouche" },
+            "type": "array",
+            "title": "Produits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "evenement_id",
+          "titre",
+          "rang",
+          "score",
+          "fait",
+          "question",
+          "produits"
+        ],
+        "title": "EvenementCompte"
+      },
+      "Exposition": {
+        "properties": {
+          "factice": { "type": "boolean", "title": "Factice" },
+          "date_maj": { "type": "string", "title": "Date Maj" },
+          "source": { "$ref": "#/components/schemas/Source" },
+          "marque": { "type": "string", "title": "Marque" },
+          "nb_produits": { "type": "integer", "title": "Nb Produits" },
+          "nb_probable": { "type": "integer", "title": "Nb Probable" },
+          "nb_possible": { "type": "integer", "title": "Nb Possible" },
+          "nb_indetermine": { "type": "integer", "title": "Nb Indetermine" },
+          "nb_non_detecte": { "type": "integer", "title": "Nb Non Detecte" },
+          "urgence": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "haute"],
+            "title": "Urgence"
+          },
+          "produits": {
+            "items": { "$ref": "#/components/schemas/Produit" },
+            "type": "array",
+            "title": "Produits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "factice",
+          "date_maj",
+          "source",
+          "marque",
+          "nb_produits",
+          "nb_probable",
+          "nb_possible",
+          "nb_indetermine",
+          "nb_non_detecte",
+          "urgence",
+          "produits"
+        ],
+        "title": "Exposition"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ListeAppels": {
+        "properties": {
+          "date_maj": { "type": "string", "title": "Date Maj" },
+          "crm_fictif": {
+            "type": "boolean",
+            "title": "Crm Fictif",
+            "description": "Toujours vrai : les comptes et leur statut sont inventés"
+          },
+          "evenement": { "$ref": "#/components/schemas/Evenement" },
+          "clients": {
+            "items": { "$ref": "#/components/schemas/Appel" },
+            "type": "array",
+            "title": "Clients"
+          },
+          "prospects": {
+            "items": { "$ref": "#/components/schemas/Appel" },
+            "type": "array",
+            "title": "Prospects"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date_maj",
+          "crm_fictif",
+          "evenement",
+          "clients",
+          "prospects"
+        ],
+        "title": "ListeAppels"
+      },
+      "ListeEvenements": {
+        "properties": {
+          "date_maj": { "type": "string", "title": "Date Maj" },
+          "evenements": {
+            "items": { "$ref": "#/components/schemas/Evenement" },
+            "type": "array",
+            "title": "Evenements"
+          }
+        },
+        "type": "object",
+        "required": ["date_maj", "evenements"],
+        "title": "ListeEvenements"
+      },
+      "ListeMarques": {
+        "properties": {
+          "factice": { "type": "boolean", "title": "Factice" },
+          "date_maj": {
+            "type": "string",
+            "title": "Date Maj",
+            "examples": ["2026-11-10"]
+          },
+          "marques": {
+            "items": { "$ref": "#/components/schemas/MarqueResume" },
+            "type": "array",
+            "title": "Marques"
+          }
+        },
+        "type": "object",
+        "required": ["factice", "date_maj", "marques"],
+        "title": "ListeMarques"
+      },
+      "MarqueResume": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identifiant à passer à /exposition",
+            "examples": ["florame"]
+          },
+          "marque": { "type": "string", "title": "Marque" },
+          "nb_produits": {
+            "type": "integer",
+            "title": "Nb Produits",
+            "description": "Produits analysables (silver)"
+          },
+          "nb_probable": {
+            "type": "integer",
+            "title": "Nb Probable",
+            "description": "Produits en exposition probable"
+          },
+          "urgence": {
+            "type": "string",
+            "enum": ["faible", "moyenne", "haute"],
+            "title": "Urgence",
+            "description": "haute si plus de 25 % de probables, moyenne si au moins 1"
+          }
+        },
+        "type": "object",
+        "required": ["id", "marque", "nb_produits", "nb_probable", "urgence"],
+        "title": "MarqueResume"
+      },
+      "Produit": {
+        "properties": {
+          "code_barre": {
+            "type": "string",
+            "title": "Code Barre",
+            "examples": ["3516170018624"]
+          },
+          "nom": { "type": "string", "title": "Nom" },
+          "niveau": {
+            "type": "string",
+            "enum": ["probable", "possible", "indetermine", "non_detecte"],
+            "title": "Niveau"
+          },
+          "substances": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Substances",
+            "description": "Allergènes de la NOUVELLE liste lus sur l'étiquette"
+          },
+          "anciens_allergenes": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Anciens Allergenes",
+            "description": "Allergènes de l'ancienne liste lus sur l'étiquette"
+          },
+          "type_rincage": {
+            "type": "string",
+            "enum": ["rince", "non_rince", "indetermine"],
+            "title": "Type Rincage"
+          },
+          "motif": {
+            "type": "string",
+            "title": "Motif",
+            "description": "Pourquoi ce niveau"
+          },
+          "date_fiche": {
+            "type": "string",
+            "title": "Date Fiche",
+            "description": "Dernière mise à jour de la fiche Open Beauty Facts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code_barre",
+          "nom",
+          "niveau",
+          "substances",
+          "anciens_allergenes",
+          "type_rincage",
+          "motif",
+          "date_fiche"
+        ],
+        "title": "Produit"
+      },
+      "ProduitTouche": {
+        "properties": {
+          "code_barre": { "type": "string", "title": "Code Barre" },
+          "marque": { "type": "string", "title": "Marque" },
+          "nom": { "type": "string", "title": "Nom" },
+          "niveau": {
+            "type": "string",
+            "enum": ["probable", "possible"],
+            "title": "Niveau"
+          },
+          "elements_directs": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Elements Directs",
+            "description": "Ingrédients visés lus sur l'étiquette"
+          },
+          "elements_indices": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Elements Indices",
+            "description": "Ingrédients proches lus sur l'étiquette"
+          },
+          "type_rincage": {
+            "type": "string",
+            "enum": ["rince", "non_rince", "indetermine"],
+            "title": "Type Rincage"
+          },
+          "date_fiche": { "type": "string", "title": "Date Fiche" },
+          "reference_parfum": {
+            "type": "string",
+            "title": "Reference Parfum",
+            "description": "Référence fictive du parfum vendu pour ce produit, vide sinon"
+          },
+          "ingredients": {
+            "type": "string",
+            "title": "Ingredients",
+            "description": "L'étiquette telle qu'elle est publiée. Y surligner les elements_directs montre ce que le code a lu",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "code_barre",
+          "marque",
+          "nom",
+          "niveau",
+          "elements_directs",
+          "elements_indices",
+          "type_rincage",
+          "date_fiche",
+          "reference_parfum"
+        ],
+        "title": "ProduitTouche"
+      },
+      "Sante": {
+        "properties": {
+          "status": { "type": "string", "title": "Status", "examples": ["ok"] },
+          "factice": { "type": "boolean", "title": "Factice" },
+          "mart_present": { "type": "boolean", "title": "Mart Present" },
+          "gold_present": { "type": "boolean", "title": "Gold Present" },
+          "appels_present": {
+            "type": "boolean",
+            "title": "Appels Present",
+            "description": "La liste d'appels est calculée",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["status", "factice", "mart_present", "gold_present"],
+        "title": "Sante"
+      },
+      "Source": {
+        "properties": {
+          "reglement": {
+            "type": "string",
+            "title": "Reglement",
+            "examples": ["UE 2023/1545"]
+          },
+          "catalogue": {
+            "type": "string",
+            "title": "Catalogue",
+            "examples": ["Open Beauty Facts (ODbL)"]
+          },
+          "echeance_produits_en_rayon": {
+            "type": "string",
+            "title": "Echeance Produits En Rayon",
+            "examples": ["2028-07-31"]
+          },
+          "statut_liste_allergenes": {
+            "type": "string",
+            "title": "Statut Liste Allergenes",
+            "examples": ["a_verifier_eurlex"]
+          }
+        },
+        "type": "object",
+        "required": [
+          "reglement",
+          "catalogue",
+          "echeance_produits_en_rayon",
+          "statut_liste_allergenes"
+        ],
+        "title": "Source"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" },
+          "input": { "title": "Input" },
+          "ctx": { "type": "object", "title": "Context" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

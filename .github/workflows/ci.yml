@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    # Même Node et même Debian que le dev container
+    container: node:24-trixie
+    steps:
+      - uses: actions/checkout@v7
+      - run: npm ci
+      # lint, typecheck, tests, format : la liste vit dans package.json
+      - run: npm run check
+      - run: npm run build
+
+  e2e:
+    # Hors conteneur : le job lance lui-même `docker compose`
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Une fois par source de données (ADR 0008) ; compose.yaml lit DATA_SOURCE
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [demo, api]
+    env:
+      DATA_SOURCE: ${{ matrix.source }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # Construit les deux images (vérifie les Dockerfile) et attend leurs healthchecks
+      - run: docker compose up --detach --build --wait
+      # --with-deps : bibliothèques système du navigateur, absentes du runner
+      - run: npm run test:e2e:install -- --with-deps
+      - run: npm run test:e2e
+      - if: failure()
+        run: docker compose logs
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-${{ matrix.source }}
+          path: playwright-report/
+          retention-days: 7

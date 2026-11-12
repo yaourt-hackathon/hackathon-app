@@ -1,0 +1,18 @@
+node_modules/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+consigne/
+.scratch/
+# Sorties de build TanStack Start / Nitro
+dist/
+.output/
+.nitro/
+.tanstack/
+# Client généré par npm run api:generate (ADR 0004)
+src/lib/data-api/generated/
+# Rapports Playwright (npm run test:e2e)
+playwright-report/
+test-results/

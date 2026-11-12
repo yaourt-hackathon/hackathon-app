@@ -1,0 +1,9 @@
+package-lock.json
+src/routeTree.gen.ts
+.output/
+.nitro/
+.tanstack/
+db/data/
+src/lib/data-api/generated/
+playwright-report/
+test-results/

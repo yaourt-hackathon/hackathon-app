@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+/* Après Tailwind, l'ordre compte (ADR 0006) */
+@import '@heroui/styles';
+/* Police de la maquette, servie par l'app : pas d'appel à un CDN */
+@import '@fontsource-variable/geist';
+
+/* Thème de la maquette v1 (Figma « Maquette », section Extension) */
+@layer base {
+  :root {
+    --accent: oklch(0.555 0.163 48.998); /* #b45309 */
+    --accent-foreground: oklch(0.9911 0 0);
+    /* Texte secondaire de la maquette, entre foreground et muted */
+    --secondaire: oklch(0.442 0.017 285.786); /* #52525b */
+  }
+}
+
+@theme inline {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-secondaire: var(--secondaire);
+}
