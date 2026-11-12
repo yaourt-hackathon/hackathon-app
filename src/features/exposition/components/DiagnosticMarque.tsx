@@ -1,7 +1,7 @@
 import { Table } from '@heroui/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { BandeauFactice } from '@/features/exposition/components/BandeauFactice';
-import { Pastille } from '@/features/exposition/components/Pastille';
+import { Pastille } from '@/components/Pastille';
 import { libelleNiveau, libelleUrgence } from '@/features/exposition/libelles';
 import { expositionQuery } from '@/features/exposition/queries';
 

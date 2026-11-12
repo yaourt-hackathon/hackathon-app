@@ -18,7 +18,7 @@ La démo suit le parcours du KAM sur trois événements au moins ([`docs/produit
 
 ## Décision
 
-Nous choisissons l'option 3. `src/features/tournee/donnees/` définit le port `SourceDonnees`, aux types générés de l'API, et ses deux adaptateurs. `DATA_SOURCE` vaut `demo` (défaut, dans `compose.yaml` aussi) ou `api`. La variable est lue à chaque appel. Toute autre valeur fait échouer `/api/health`, qui renvoie `source`. Le scénario vit dans `scenario.server.ts`, donc jamais dans le code du navigateur. `scenario.server.test.ts` passe chaque réponse du scénario dans les schémas Zod générés.
+Nous choisissons l'option 3. `src/features/tournee/donnees/` définit le port `SourceDonnees`, aux types générés de l'API, et ses deux adaptateurs. `DATA_SOURCE` vaut `demo` (défaut, dans `compose.yaml` aussi) ou `api`. La variable est lue à chaque appel. Toute autre valeur fait échouer `/api/health`, qui renvoie `source`. Le scénario vit dans `scenario.server.ts`, donc jamais dans le code du navigateur. `scenario.server.test.ts` passe chaque réponse du scénario dans les schémas Zod générés. Le job `e2e` de la CI joue les tests dans les deux modes.
 
 ## Conséquences
 

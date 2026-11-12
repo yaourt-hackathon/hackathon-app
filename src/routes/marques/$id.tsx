@@ -14,7 +14,10 @@ function Marque() {
   const { id } = Route.useParams();
   return (
     <main className="mx-auto max-w-5xl px-6 py-16">
-      <Link to="/" className={linkVariants().base({ className: 'text-sm' })}>
+      <Link
+        to="/marques"
+        className={linkVariants().base({ className: 'text-sm' })}
+      >
         ← Toutes les marques
       </Link>
       <div className="mt-6">
