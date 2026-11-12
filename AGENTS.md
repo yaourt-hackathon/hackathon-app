@@ -8,6 +8,8 @@ Présentation du projet : `README.md`. Stack : TanStack Start (React + TypeScrip
 - `npm run dev` : serveur de dev sur http://localhost:3000.
 - Avant de dire « fini » : `npm run check` (lint, types, tests, format) puis `npm run build`. Ce sont les contrôles du job `qualite` (`.github/workflows/ci.yml`, conteneur `node:24-trixie`).
 - `npm run format` corrige la forme.
+- `docker compose up --build` lance l'app et l'API data (`compose.yaml`) ; `npm run test:e2e` joue Playwright contre cette stack (ADR 0007), comme le job `e2e`. Navigateur à installer une fois : `npm run test:e2e:install`. Port déjà pris : `APP_PORT` (et `DATA_API_PORT`) au `docker compose up`, puis le même `APP_PORT` pour `test:e2e`.
+- Vitest ne lit que `src/**/*.test.{ts,tsx}` ; `e2e/` appartient à Playwright.
 
 ## Règles
 

@@ -1,0 +1,23 @@
+# `docker compose up` : l'app sur http://localhost:3000 et l'API data à côté (jalon m2).
+name: note-de-tete
+
+services:
+  app:
+    build: .
+    ports:
+      # 127.0.0.1 : pas exposé au reste du réseau (wifi du hackathon)
+      - '127.0.0.1:${APP_PORT:-3000}:3000'
+    environment:
+      DATA_API_URL: http://data-api:8000
+    depends_on:
+      data-api:
+        condition: service_healthy
+
+  data-api:
+    # Dépôt data épinglé sur un commit : l'app est testée contre cette version
+    # de l'API, pas contre develop qui bouge chaque nuit. Changer de version :
+    # remplacer le commit, puis `npm run api:pull` si le contrat a changé.
+    build: https://github.com/yaourt-hackathon/data.git#33613cfe97a5eca4c513835946a84a58d97544a3
+    ports:
+      # Pour `npm run dev` hors conteneur (DATA_API_URL=http://localhost:8000)
+      - '127.0.0.1:${DATA_API_PORT:-8000}:8000'
