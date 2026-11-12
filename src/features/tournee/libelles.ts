@@ -5,7 +5,7 @@ import type {
   Reformulation,
 } from '@/features/tournee/reformulation/preparees';
 import type { OrigineTexte } from '@/features/tournee/tournee';
-import type { Appel, Evenement } from '@/lib/data-api/generated';
+import type { Appel, Evenement, ProduitTouche } from '@/lib/data-api/generated';
 
 const types: Record<string, string> = {
   reglementation: 'Réglementation',
@@ -56,4 +56,11 @@ export const libelleOrigineReformulation: Record<
   preparee: "Texte préparé par l'équipe, en attendant l'IA",
   api: "Critères de l'API data",
   llm: "Rédigé par l'IA : à vérifier avant de valider",
+};
+
+// « Exposition probable », jamais « non-conformité » : une étiquette publique
+// ne donne pas les concentrations (docs/produit.md)
+export const libelleNiveau: Record<ProduitTouche['niveau'], Libelle> = {
+  probable: { texte: 'Exposition probable', couleur: 'danger' },
+  possible: { texte: 'Exposition possible', couleur: 'warning' },
 };

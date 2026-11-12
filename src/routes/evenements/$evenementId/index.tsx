@@ -68,7 +68,11 @@ function PageEvenement() {
         />
       </div>
       {valide && (
-        <ListeAppels appels={tournee.appels} focus={!valideAuChargement} />
+        <ListeAppels
+          evenementId={evenementId}
+          appels={tournee.appels}
+          focus={!valideAuChargement}
+        />
       )}
       <PiedDonnees
         mode={tournee.mode}

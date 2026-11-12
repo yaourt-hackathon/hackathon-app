@@ -1,3 +1,4 @@
+import { Toast } from '@heroui/react';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import type { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
@@ -34,6 +35,8 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         {children}
+        {/* Une seule région de notifications pour toute l'app */}
+        <Toast.Provider />
         <TanStackDevtools
           config={{ position: 'bottom-right' }}
           plugins={[

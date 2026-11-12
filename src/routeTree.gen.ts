@@ -14,6 +14,7 @@ import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as MarquesIndexRouteImport } from './routes/marques/index'
 import { Route as MarquesIdRouteImport } from './routes/marques/$id'
 import { Route as EvenementsEvenementIdIndexRouteImport } from './routes/evenements/$evenementId/index'
+import { Route as EvenementsEvenementIdAppelsCompteIdRouteImport } from './routes/evenements/$evenementId/appels/$compteId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -41,6 +42,12 @@ const EvenementsEvenementIdIndexRoute =
     path: '/evenements/$evenementId/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EvenementsEvenementIdAppelsCompteIdRoute =
+  EvenementsEvenementIdAppelsCompteIdRouteImport.update({
+    id: '/evenements/$evenementId/appels/$compteId',
+    path: '/evenements/$evenementId/appels/$compteId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -48,6 +55,7 @@ export interface FileRoutesByFullPath {
   '/marques/$id': typeof MarquesIdRoute
   '/marques/': typeof MarquesIndexRoute
   '/evenements/$evenementId/': typeof EvenementsEvenementIdIndexRoute
+  '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -55,6 +63,7 @@ export interface FileRoutesByTo {
   '/marques/$id': typeof MarquesIdRoute
   '/marques': typeof MarquesIndexRoute
   '/evenements/$evenementId': typeof EvenementsEvenementIdIndexRoute
+  '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -63,6 +72,7 @@ export interface FileRoutesById {
   '/marques/$id': typeof MarquesIdRoute
   '/marques/': typeof MarquesIndexRoute
   '/evenements/$evenementId/': typeof EvenementsEvenementIdIndexRoute
+  '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -72,6 +82,7 @@ export interface FileRouteTypes {
     | '/marques/$id'
     | '/marques/'
     | '/evenements/$evenementId/'
+    | '/evenements/$evenementId/appels/$compteId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -79,6 +90,7 @@ export interface FileRouteTypes {
     | '/marques/$id'
     | '/marques'
     | '/evenements/$evenementId'
+    | '/evenements/$evenementId/appels/$compteId'
   id:
     | '__root__'
     | '/'
@@ -86,6 +98,7 @@ export interface FileRouteTypes {
     | '/marques/$id'
     | '/marques/'
     | '/evenements/$evenementId/'
+    | '/evenements/$evenementId/appels/$compteId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +107,7 @@ export interface RootRouteChildren {
   MarquesIdRoute: typeof MarquesIdRoute
   MarquesIndexRoute: typeof MarquesIndexRoute
   EvenementsEvenementIdIndexRoute: typeof EvenementsEvenementIdIndexRoute
+  EvenementsEvenementIdAppelsCompteIdRoute: typeof EvenementsEvenementIdAppelsCompteIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +147,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EvenementsEvenementIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evenements/$evenementId/appels/$compteId': {
+      id: '/evenements/$evenementId/appels/$compteId'
+      path: '/evenements/$evenementId/appels/$compteId'
+      fullPath: '/evenements/$evenementId/appels/$compteId'
+      preLoaderRoute: typeof EvenementsEvenementIdAppelsCompteIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -142,6 +163,8 @@ const rootRouteChildren: RootRouteChildren = {
   MarquesIdRoute: MarquesIdRoute,
   MarquesIndexRoute: MarquesIndexRoute,
   EvenementsEvenementIdIndexRoute: EvenementsEvenementIdIndexRoute,
+  EvenementsEvenementIdAppelsCompteIdRoute:
+    EvenementsEvenementIdAppelsCompteIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
