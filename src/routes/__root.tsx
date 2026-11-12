@@ -32,7 +32,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-screen bg-stone-50 text-stone-900 antialiased">
+      <body className="min-h-screen bg-background text-foreground antialiased">
         {children}
         <TanStackDevtools
           config={{ position: 'bottom-right' }}

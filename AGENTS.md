@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Présentation du projet : `README.md`. Stack : TanStack Start (React + TypeScript), TanStack Query, Tailwind CSS v4, Vitest (ADR 0002).
+Présentation du projet : `README.md`. Stack : TanStack Start (React + TypeScript), TanStack Query, Tailwind CSS v4, HeroUI v3, Vitest (ADR 0002, 0006).
 
 ## Lancer
 
@@ -17,6 +17,7 @@ Présentation du projet : `README.md`. Stack : TanStack Start (React + TypeScrip
 - Le hook `.husky/pre-commit` lance lint-staged sur les fichiers indexés. Sa config est dans `package.json`.
 - Où ranger le code : ADR 0005. Une route ne fait pas d'appel réseau ; tout appel externe vit dans un `*.server.ts` de `src/features/<domaine>/`.
 - Toute logique (tri, calcul, gestion d'erreur) a son `*.test.ts` à côté du fichier (Vitest, `vitest.config.ts`). `npm run check` les joue en CI.
+- UI : composants HeroUI v3 et couleurs du thème, pas de couleur Tailwind codée en dur (ADR 0006). Doc v3 via le MCP `heroui-react` (`.mcp.json`) ; celle de v2 ne s'applique pas.
 - Imports internes via l'alias `@/` (défini dans `tsconfig.json`), pas de `../../`.
 - L'API data ne s'appelle que via le client généré depuis `openapi/data-api.json` (ADR 0004), dans un `*.server.ts`. `src/lib/data-api/generated/` est gitignoré : ne l'édite pas. Si l'API change : `npm run api:pull`, puis commite la spec.
 - `src/routeTree.gen.ts` est généré par `npm run dev` ou `npm run build` : ne l'édite pas, commite-le.

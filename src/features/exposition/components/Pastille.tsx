@@ -1,14 +1,15 @@
-interface PastilleProps {
-  texte: string;
-  classes: string;
-}
+import { Chip } from '@heroui/react';
+import type { Libelle } from '@/features/exposition/libelles';
 
-export function Pastille({ texte, classes }: PastilleProps) {
+export function Pastille({ texte, couleur }: Libelle) {
   return (
-    <span
-      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${classes}`}
+    <Chip
+      color={couleur}
+      size="sm"
+      variant="soft"
+      className="whitespace-nowrap"
     >
       {texte}
-    </span>
+    </Chip>
   );
 }
