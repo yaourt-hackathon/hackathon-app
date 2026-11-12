@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { BandeauFactice } from '@/features/exposition/components/BandeauFactice';
-import { Pastille } from '@/features/exposition/components/Pastille';
+import { Pastille } from '@/components/Pastille';
 import { libelleUrgence } from '@/features/exposition/libelles';
 import { marquesQuery } from '@/features/exposition/queries';
 

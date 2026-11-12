@@ -1,13 +1,8 @@
-import type { ChipVariants } from '@heroui/styles';
+import type { Libelle } from '@/components/Pastille';
 import type { Produit } from '@/lib/data-api/generated';
 import type { Urgence } from '@/features/exposition/urgence';
 
 type Niveau = Produit['niveau'];
-
-export interface Libelle {
-  texte: string;
-  couleur: ChipVariants['color'];
-}
 
 // Vocabulaire de l'API : « exposition probable », jamais « non-conformité »
 export const libelleUrgence: Record<Urgence, Libelle> = {

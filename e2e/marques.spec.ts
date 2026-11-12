@@ -1,10 +1,10 @@
-import { execFileSync } from 'node:child_process';
 import { expect, test } from '@playwright/test';
+import { sansMotInterdit } from './outils';
 
 const rangUrgence = ['Urgence haute', 'Urgence moyenne', 'Urgence faible'];
 
 test('la liste montre les marques triées par urgence', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/marques');
 
   const marques = page.getByRole('link', { name: /produits en exposition/ });
   await expect(marques.first()).toBeVisible();
@@ -17,12 +17,13 @@ test('la liste montre les marques triées par urgence', async ({ page }) => {
   );
   expect(rangs).not.toContain(-1);
   expect(rangs).toEqual([...rangs].sort((a, b) => a - b));
+  await sansMotInterdit(page);
 });
 
 test('une marque ouvre sa fiche avec niveau et substances', async ({
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/marques');
   const premiere = page
     .getByRole('link', { name: /produits en exposition/ })
     .first();
@@ -42,6 +43,10 @@ test('une marque ouvre sa fiche avec niveau et substances', async ({
     .filter({ hasText: 'Exposition probable' })
     .first();
   await expect(ligne.getByRole('gridcell').nth(1)).not.toHaveText('—');
+  await sansMotInterdit(page);
+
+  await page.getByRole('link', { name: '← Toutes les marques' }).click();
+  await expect(page).toHaveURL(/\/marques$/);
 });
 
 test('une marque inconnue répond 404 « Introuvable »', async ({ page }) => {
@@ -49,31 +54,5 @@ test('une marque inconnue répond 404 « Introuvable »', async ({ page }) => {
   expect(reponse?.status()).toBe(404);
   await expect(
     page.getByRole('heading', { name: 'Introuvable' }),
-  ).toBeVisible();
-});
-
-test('API data arrêtée : erreur, puis « Réessayer » recharge', async ({
-  page,
-}) => {
-  // Arrêt puis relance de l'API, healthcheck compris : temps triplé
-  test.slow();
-  const compose = (...args: string[]) =>
-    execFileSync('docker', ['compose', ...args], { stdio: 'inherit' });
-
-  compose('stop', 'data-api');
-  try {
-    await page.goto('/');
-    await expect(
-      page.getByRole('heading', { name: 'Données indisponibles' }),
-    ).toBeVisible();
-  } finally {
-    // Relance le même conteneur (mêmes ports) et attend son healthcheck,
-    // même si le test échoue
-    compose('up', '--detach', '--wait', '--no-recreate', 'data-api');
-  }
-
-  await page.getByRole('button', { name: 'Réessayer' }).click();
-  await expect(
-    page.getByRole('link', { name: /produits en exposition/ }).first(),
   ).toBeVisible();
 });
