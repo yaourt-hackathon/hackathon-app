@@ -14,6 +14,7 @@ import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as MarquesIndexRouteImport } from './routes/marques/index'
 import { Route as MarquesIdRouteImport } from './routes/marques/$id'
 import { Route as EvenementsEvenementIdIndexRouteImport } from './routes/evenements/$evenementId/index'
+import { Route as EvenementsEvenementIdAppelsIndexRouteImport } from './routes/evenements/$evenementId/appels/index'
 import { Route as EvenementsEvenementIdAppelsCompteIdRouteImport } from './routes/evenements/$evenementId/appels/$compteId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -42,6 +43,12 @@ const EvenementsEvenementIdIndexRoute =
     path: '/evenements/$evenementId/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EvenementsEvenementIdAppelsIndexRoute =
+  EvenementsEvenementIdAppelsIndexRouteImport.update({
+    id: '/evenements/$evenementId/appels/',
+    path: '/evenements/$evenementId/appels/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EvenementsEvenementIdAppelsCompteIdRoute =
   EvenementsEvenementIdAppelsCompteIdRouteImport.update({
     id: '/evenements/$evenementId/appels/$compteId',
@@ -56,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/marques/': typeof MarquesIndexRoute
   '/evenements/$evenementId/': typeof EvenementsEvenementIdIndexRoute
   '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
+  '/evenements/$evenementId/appels/': typeof EvenementsEvenementIdAppelsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -64,6 +72,7 @@ export interface FileRoutesByTo {
   '/marques': typeof MarquesIndexRoute
   '/evenements/$evenementId': typeof EvenementsEvenementIdIndexRoute
   '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
+  '/evenements/$evenementId/appels': typeof EvenementsEvenementIdAppelsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -73,6 +82,7 @@ export interface FileRoutesById {
   '/marques/': typeof MarquesIndexRoute
   '/evenements/$evenementId/': typeof EvenementsEvenementIdIndexRoute
   '/evenements/$evenementId/appels/$compteId': typeof EvenementsEvenementIdAppelsCompteIdRoute
+  '/evenements/$evenementId/appels/': typeof EvenementsEvenementIdAppelsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -83,6 +93,7 @@ export interface FileRouteTypes {
     | '/marques/'
     | '/evenements/$evenementId/'
     | '/evenements/$evenementId/appels/$compteId'
+    | '/evenements/$evenementId/appels/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -91,6 +102,7 @@ export interface FileRouteTypes {
     | '/marques'
     | '/evenements/$evenementId'
     | '/evenements/$evenementId/appels/$compteId'
+    | '/evenements/$evenementId/appels'
   id:
     | '__root__'
     | '/'
@@ -99,6 +111,7 @@ export interface FileRouteTypes {
     | '/marques/'
     | '/evenements/$evenementId/'
     | '/evenements/$evenementId/appels/$compteId'
+    | '/evenements/$evenementId/appels/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -108,6 +121,7 @@ export interface RootRouteChildren {
   MarquesIndexRoute: typeof MarquesIndexRoute
   EvenementsEvenementIdIndexRoute: typeof EvenementsEvenementIdIndexRoute
   EvenementsEvenementIdAppelsCompteIdRoute: typeof EvenementsEvenementIdAppelsCompteIdRoute
+  EvenementsEvenementIdAppelsIndexRoute: typeof EvenementsEvenementIdAppelsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -147,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EvenementsEvenementIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evenements/$evenementId/appels/': {
+      id: '/evenements/$evenementId/appels/'
+      path: '/evenements/$evenementId/appels'
+      fullPath: '/evenements/$evenementId/appels/'
+      preLoaderRoute: typeof EvenementsEvenementIdAppelsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/evenements/$evenementId/appels/$compteId': {
       id: '/evenements/$evenementId/appels/$compteId'
       path: '/evenements/$evenementId/appels/$compteId'
@@ -165,6 +186,7 @@ const rootRouteChildren: RootRouteChildren = {
   EvenementsEvenementIdIndexRoute: EvenementsEvenementIdIndexRoute,
   EvenementsEvenementIdAppelsCompteIdRoute:
     EvenementsEvenementIdAppelsCompteIdRoute,
+  EvenementsEvenementIdAppelsIndexRoute: EvenementsEvenementIdAppelsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -59,10 +59,31 @@ function versAppel(appel: AppelScenario): Appel {
 }
 
 function versProduits(appel: AppelScenario): ProduitTouche[] {
-  return appel.produits.map((p) => ({
-    ...trouver(scenario.produits, (q) => q.code_barre === p.code_barre),
-    ...p,
-  }));
+  return appel.produits.map((p) => {
+    const produit = trouver(
+      scenario.produits,
+      (q) => q.code_barre === p.code_barre,
+    );
+    // L'étiquette passe par etiquettes(), pas par la forme de l'API
+    return {
+      marque: produit.marque,
+      nom: produit.nom,
+      type_rincage: produit.type_rincage,
+      date_fiche: produit.date_fiche,
+      reference_parfum: produit.reference_parfum,
+      ...p,
+    };
+  });
+}
+
+function etiquettes(codes: readonly string[]): Record<string, string> {
+  const connues: Record<string, string> = {};
+  for (const p of scenario.produits) {
+    if (p.ingredients !== undefined && codes.includes(p.code_barre)) {
+      connues[p.code_barre] = p.ingredients;
+    }
+  }
+  return connues;
 }
 
 function evenements(): ListeEvenements {
@@ -121,4 +142,5 @@ export const sourceDemo: SourceDonnees = {
   appels: (evenementId) =>
     Promise.resolve(structuredClone(appels(evenementId))),
   compte: (compteId) => Promise.resolve(structuredClone(compte(compteId))),
+  etiquettes: (codes) => Promise.resolve(etiquettes(codes)),
 };

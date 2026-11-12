@@ -12,14 +12,11 @@ test('démo, API data arrêtée : le parcours tient, /marques le dit', async ({
 
   await sansApiData(async () => {
     await page.goto('/');
-    const lien = page
-      .getByRole('list', { name: 'Événements détectés' })
-      .getByRole('link')
-      .first();
-    const titre = (await lien.textContent()) ?? '';
-    await lien.click();
+    await page.getByRole('link', { name: 'Lire le sujet' }).click();
     await expect(page).toHaveURL(/\/evenements\/[^/]+$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(titre);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await page.getByRole('link', { name: /^Valider et voir/ }).click();
+    await expect(page.locator('[data-texte="question"]:visible')).toBeVisible();
 
     await page.goto('/marques');
     await expect(
@@ -47,10 +44,5 @@ test('API, API data arrêtée : erreur, puis « Réessayer » recharge', async (
   });
 
   await page.getByRole('button', { name: 'Réessayer' }).click();
-  await expect(
-    page
-      .getByRole('list', { name: 'Événements détectés' })
-      .getByRole('link')
-      .first(),
-  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Lire le sujet' })).toBeVisible();
 });

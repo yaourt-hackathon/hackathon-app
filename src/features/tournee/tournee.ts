@@ -25,9 +25,12 @@ export interface AppelClient {
   question: string;
   origine_textes: OrigineTexte;
   nb_produits_analyses: number;
-  confiance: Appel['confiance'];
+  nb_probable: number;
+  nb_possible: number;
   /** Produits touchés par cet événement, `null` si le compte manque. */
   produits: ProduitTouche[] | null;
+  /** Liste d'ingrédients du premier produit, si la source la connaît. */
+  etiquette: string | null;
 }
 
 export interface Tournee {
@@ -72,12 +75,14 @@ export function construireTournee(
         // En démo, tout texte vient du scénario écrit par l'équipe
         origine_textes: mode === 'demo' ? 'preparee' : appel.origine_textes,
         nb_produits_analyses: appel.nb_produits_analyses,
-        confiance: appel.confiance,
+        nb_probable: appel.nb_probable,
+        nb_possible: appel.nb_possible,
         produits:
           produits &&
           [...produits].sort(
             (a, b) => ordreNiveau[a.niveau] - ordreNiveau[b.niveau],
           ),
+        etiquette: null,
       };
     })
     .sort((a, b) => a.rang - b.rang);
@@ -91,25 +96,38 @@ export function construireTournee(
   };
 }
 
-export interface ResumeProduits {
-  produits: { nom: string; ingredients: string[] }[];
-  autres: number;
+/** Le premier produit de chaque appel : celui dont on montre l'étiquette. */
+export function produitsEnTete(tournee: Tournee): string[] {
+  return tournee.appels.flatMap((a) => a.produits?.[0]?.code_barre ?? []);
 }
 
-/**
- * Les premiers produits touchés, avec leurs ingrédients en cause (visés, ou à
- * défaut proches), et le nombre de produits non cités.
- */
-export function resumerProduits(
-  produits: readonly ProduitTouche[],
-  max = 3,
-): ResumeProduits {
+/** Ajoute à chaque appel l'étiquette de son premier produit, si connue. */
+export function avecEtiquettes(
+  tournee: Tournee,
+  etiquettes: Readonly<Record<string, string>>,
+): Tournee {
   return {
-    produits: produits.slice(0, max).map((p) => ({
-      nom: p.nom,
-      ingredients:
-        p.elements_directs.length > 0 ? p.elements_directs : p.elements_indices,
-    })),
-    autres: Math.max(0, produits.length - max),
+    ...tournee,
+    appels: tournee.appels.map((a) => {
+      const code = a.produits?.[0]?.code_barre;
+      return { ...a, etiquette: (code && etiquettes[code]) || null };
+    }),
+  };
+}
+
+/** Les chiffres d'un sujet pour « Chez vos clients » : le plus touché d'abord. */
+export function chiffresTournee(appels: readonly AppelClient[]) {
+  const touches = (a: AppelClient) => a.nb_probable + a.nb_possible;
+  const plusTouche = [...appels].sort((a, b) => touches(b) - touches(a))[0];
+  return {
+    nb_clients: appels.length,
+    nb_produits_touches: appels.reduce((n, a) => n + touches(a), 0),
+    nb_produits_analyses: appels.reduce(
+      (n, a) => n + a.nb_produits_analyses,
+      0,
+    ),
+    plus_touche: plusTouche
+      ? { nom: plusTouche.nom_compte, nb_produits: touches(plusTouche) }
+      : null,
   };
 }

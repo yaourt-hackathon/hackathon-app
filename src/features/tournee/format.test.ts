@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  compter,
   formaterDate,
+  formaterDateCourte,
   formaterEcheance,
-  formaterNbClients,
+  formaterJour,
+  formaterJourMois,
 } from '@/features/tournee/format';
 
 describe('formaterDate', () => {
@@ -21,19 +24,27 @@ describe('formaterDate', () => {
   });
 });
 
-describe('formaterEcheance', () => {
-  it("dit « Sans échéance » quand l'API la laisse vide", () => {
-    expect(formaterEcheance('')).toBe('Sans échéance');
-    expect(formaterEcheance('2027-06-30')).toBe('Échéance le 30 juin 2027');
+describe('formats courts de la maquette', () => {
+  it('écrit le jour de la veille, la date courte et le jour du mois', () => {
+    expect(formaterJour('2026-11-12')).toBe('Jeudi 12 novembre');
+    expect(formaterDateCourte('2028-07-31')).toBe('31/07/2028');
+    expect(formaterJourMois('2026-11-06')).toBe('06/11');
   });
 });
 
-describe('formaterNbClients', () => {
+describe('formaterEcheance', () => {
+  it("dit « sans échéance » quand l'API la laisse vide", () => {
+    expect(formaterEcheance('')).toBe('sans échéance');
+    expect(formaterEcheance('2028-07-31')).toBe('échéance 31/07/2028');
+  });
+});
+
+describe('compter', () => {
   it.each([
-    [0, 'Aucun client à appeler'],
-    [1, '1 client à appeler'],
-    [3, '3 clients à appeler'],
+    [0, '0 client'],
+    [1, '1 client'],
+    [3, '3 clients'],
   ])('%i → %s', (nb, texte) => {
-    expect(formaterNbClients(nb)).toBe(texte);
+    expect(compter(nb, 'client')).toBe(texte);
   });
 });

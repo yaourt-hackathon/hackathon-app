@@ -14,7 +14,9 @@ import type {
 //   inventé (code 200…, réservé à l'usage interne) appartient à une entreprise
 //   inventée, dont le nom le dit ;
 // - le CRM est fictif : Cattier, prospect dans l'API, est ici un client ;
-// - un fait cite sa source, une question finit par « ? ».
+// - un fait cite sa source, une question finit par « ? ». Les faits sont dits
+//   au client (« Votre… », maquette v1) ; EVT-001 garde ses nombres et ses
+//   produits de l'API, mais ses phrases sont réécrites pour la démo.
 // `origine_textes` vaut « gabarit » : l'API n'a pas de valeur « préparé » ; en
 // mode démo, l'écran dit que tout texte a été préparé par l'équipe.
 
@@ -23,7 +25,10 @@ type CompteScenario = Omit<Compte, 'date_maj' | 'crm_fictif' | 'evenements'>;
 type ProduitScenario = Omit<
   ProduitTouche,
   'niveau' | 'elements_directs' | 'elements_indices'
->;
+> & {
+  /** Liste d'ingrédients de l'étiquette (INCI), quand on l'a. */
+  ingredients?: string;
+};
 type ProduitAppel = Pick<
   ProduitTouche,
   'code_barre' | 'niveau' | 'elements_directs' | 'elements_indices'
@@ -232,6 +237,8 @@ export const scenario = {
       type_rincage: 'non_rince',
       date_fiche: '2018-02-14',
       reference_parfum: 'PF-0102',
+      ingredients:
+        'Alcohol, Citrus Aurantium Amara (Bitter Orange) Flower Water, Litsea Cubeba Fruit Oil*, Limonene, Citral, Citrus Aurantium Amara (Bitter Orange) Peel Oil*, Citrus Medica Limonum (Lemon) Peel Oil*, Citrus Aurantium Bergamia (Bergamot) Fruit Oil*, Lavandule Angustifolia (Lavender) Oil*, Citrus Aurantium Amara (Bitter Orange) Leaf/Twig Oil*, Styrax Tonkinensis Resin Extract, Elettaria Cardamomum Seed Oil*, Linalool, Geraniol, Citronellol, Benzyl Benzoate, Farnescl, Benzyl Cinnamate, Benzyl Alcohol',
     },
     {
       code_barre: '3516170018242',
@@ -248,6 +255,8 @@ export const scenario = {
       type_rincage: 'rince',
       date_fiche: '2026-03-25',
       reference_parfum: 'PF-0101',
+      ingredients:
+        'Aqua, Mentha Piperita FIower Water, Decyl Glucoside, Cocamidopropyl Betaine, glycerin, caprylyl/capryl glucoside, Sodium Cocoyl glutamate, Argania Spinosa Kernel oil, Cedrus Atlantica (Atlas Cedar) Bark oil, argan oil, polyglyceryl-6 esters, Helianthus Annuus Seed OiI, Cymbopogon Martini oil, lavandula angustifolia oil, benzyl alcohol, Sodium Lauroyl Oat Amino Acids, Sodium Glutamate, Sodium chloride, citric acid, coconut acid, dehydroacetic acid, Sodium benzoate, tocopherol, benzoic acid, potassium sorbate, linalool, geraniol',
     },
     {
       code_barre: '3516170022751',
@@ -273,6 +282,8 @@ export const scenario = {
       type_rincage: 'rince',
       date_fiche: '2016-05-16',
       reference_parfum: '',
+      ingredients:
+        'Aqua, Kaolin, Illite, Mentha Piperita Extract, Hamamelis Virginiana Water, Simmondsia Chinensis Seed Oil, Cetearyl Alcohol, Cetearyl Glucoside, Benzyl Alcohol, Pelargonium Graveolens Oil, Mentha Piperita Oil, Lactic Acid, Citronellol',
     },
     {
       code_barre: '3283950040020',
@@ -305,6 +316,8 @@ export const scenario = {
       type_rincage: 'rince',
       date_fiche: '2016-05-28',
       reference_parfum: '',
+      ingredients:
+        'Sodium Palmate, Sodium Palm Kernelate, Aqua, Illite, Glycerin, Kaolin, Helianthus Annuus Hybrid Oil, Inulin, Lavandula Angustifolia Oil, Mel, Sodium Chloride, Sodium Hydroxide, Citric Acid, Tocopherol, Geraniol, Limonene, Linalool',
     },
     {
       code_barre: '3283950914819',
@@ -370,6 +383,8 @@ export const scenario = {
       type_rincage: 'indetermine',
       date_fiche: '2017-01-11',
       reference_parfum: 'PF-0103',
+      ingredients:
+        'aqua/water, rosa damascena flower water*, glycerin, alcohol***, menyanthes trifoliata leaf extract, rosa canina flower extract*, rosa damascena flower oil, hyaluronic acid, dehydroxanthan gum, levulinic acid, decyl glucoside, sodium levulinate, sodium benzoate, parfum/fragrance, potassium sorbate, geraniol**, citronellol**, linalool**, eugenol**, farinesol**, citral**, limonene**',
     },
     {
       code_barre: '3284410031022',
@@ -564,6 +579,8 @@ export const scenario = {
       type_rincage: 'rince',
       date_fiche: '2026-10-02',
       reference_parfum: 'PF-0201',
+      ingredients:
+        'Sodium Olivate, Sodium Cocoate, Aqua, Glycerin, Lavandula Angustifolia Oil, Sodium Chloride, Linalool, Limonene',
     },
     {
       code_barre: '2000000000028',
@@ -604,6 +621,8 @@ export const scenario = {
       type_rincage: 'non_rince',
       date_fiche: '2026-04-14',
       reference_parfum: 'PF-0203',
+      ingredients:
+        'Caprylic/Capric Triglyceride, Lavandula Angustifolia Oil, Tocopherol, Linalool, Limonene',
     },
     {
       code_barre: '2000000000073',
@@ -628,6 +647,8 @@ export const scenario = {
       type_rincage: 'non_rince',
       date_fiche: '2026-09-01',
       reference_parfum: 'PF-0204',
+      ingredients:
+        'Aqua, Rosa Damascena Flower Water, Glycerin, Sodium Hyaluronate, Rosa Damascena Flower Oil, Xanthan Gum, Citronellol, Geraniol',
     },
     {
       code_barre: '2000000000103',
@@ -660,6 +681,8 @@ export const scenario = {
       type_rincage: 'non_rince',
       date_fiche: '2026-07-07',
       reference_parfum: 'PF-0205',
+      ingredients:
+        'Rosa Damascena Flower Water, Glycerin, Aloe Barbadensis Leaf Juice, Sodium Benzoate, Citric Acid',
     },
     {
       code_barre: '2000000000141',
@@ -679,8 +702,8 @@ export const scenario = {
       rang: 1,
       score: 50,
       raison_classement: '5 produits sur 6 en exposition probable (83 %).',
-      fait: '5 produits sur 6 analysés listent au moins un ingrédient visé (orange, citron, lavande, ylang-ylang). Source : Règlement (UE) 2023/1545.',
-      question: QUESTION_EVT_001,
+      fait: "Cinq de vos six produits listent une huile essentielle de la nouvelle liste d'allergènes, comme l'orange et le citron de votre eau de toilette Verveine Pétillante. Ils devront probablement l'indiquer sur l'étiquette d'ici juillet 2028. Source : Règlement (UE) 2023/1545.",
+      question: 'Avez-vous déjà décidé comment traiter ça sur votre gamme ?',
       origine_textes: 'gabarit',
       nb_probable: 5,
       nb_possible: 0,
@@ -718,7 +741,7 @@ export const scenario = {
       score: 47,
       raison_classement:
         '6 produits sur 19 en exposition probable (32 %), 4 en exposition possible.',
-      fait: '6 produits sur 19 analysés listent au moins un ingrédient visé (menthe, citron, lavande, geranium). Source : Règlement (UE) 2023/1545.',
+      fait: "Six de vos produits listent une huile essentielle de la nouvelle liste d'allergènes, surtout la menthe de vos masques à l'argile et de votre Dentargile. Ils devront probablement l'indiquer sur l'étiquette d'ici juillet 2028. Source : Règlement (UE) 2023/1545.",
       question: QUESTION_EVT_001,
       origine_textes: 'gabarit',
       nb_probable: 6,
@@ -762,8 +785,9 @@ export const scenario = {
       score: 31,
       raison_classement:
         '3 produits sur 14 en exposition probable (21 %), 5 en exposition possible.',
-      fait: '3 produits sur 14 analysés listent au moins un ingrédient visé (rose, orange). Source : Règlement (UE) 2023/1545.',
-      question: QUESTION_EVT_001,
+      fait: "Votre Eau extraordinaire Rose et votre Nectar de roses listent de la rose, et votre savon crème de l'orange : deux ingrédients de la nouvelle liste d'allergènes. Source : Règlement (UE) 2023/1545.",
+      question:
+        'Avez-vous déjà regardé ce que la nouvelle liste change pour vos soins à la rose ?',
       origine_textes: 'gabarit',
       nb_probable: 3,
       nb_possible: 5,
@@ -895,7 +919,7 @@ export const scenario = {
       score: 37,
       raison_classement:
         '4 produits sur 8 en exposition probable (50 %), 1 en exposition possible.',
-      fait: `4 produits sur 8 analysés listent de l'huile essentielle de lavande ou de lavandin, dont le savon de Marseille et la brume d'oreiller. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre savon de Marseille, votre lait corps et votre brume d'oreiller listent de l'huile essentielle de lavande, et votre savon surgras du lavandin. La récolte serait en baisse cette année. Source : ${VEILLE_FICTIVE}.`,
       question:
         "Vos stocks de lavande couvrent-ils vos ventes jusqu'à la prochaine récolte ?",
       origine_textes: 'gabarit',
@@ -918,7 +942,7 @@ export const scenario = {
       score: 22,
       raison_classement:
         '2 produits sur 6 en exposition probable (33 %), 1 en exposition possible.',
-      fait: `2 produits sur 6 analysés listent de l'huile essentielle de lavande : la mousse de rasage et l'eau de toilette Verveine Pétillante. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre mousse de rasage et votre eau de toilette Verveine Pétillante listent de l'huile essentielle de lavande, dont la récolte serait en baisse cette année. Source : ${VEILLE_FICTIVE}.`,
       question:
         'Vos fournisseurs vous ont-ils déjà parlé de délais sur la lavande ?',
       origine_textes: 'gabarit',
@@ -939,7 +963,7 @@ export const scenario = {
       score: 15,
       raison_classement:
         '2 produits sur 19 en exposition probable (11 %), 1 en exposition possible.',
-      fait: `2 produits sur 19 analysés listent de l'huile essentielle de lavande : le savon Argimiel et le shampooing protecteur. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre savon Argimiel et votre shampooing protecteur listent de l'huile essentielle de lavande, dont la récolte serait en baisse cette année. Source : ${VEILLE_FICTIVE}.`,
       question:
         'Quelle place la lavande tient-elle dans vos savons et vos shampooings ?',
       origine_textes: 'gabarit',
@@ -960,7 +984,7 @@ export const scenario = {
       score: 12,
       raison_classement:
         '1 produit sur 10 en exposition probable (10 %), 2 en exposition possible.',
-      fait: `1 produit sur 10 analysés liste de l'huile essentielle de lavande : le roll-on apaisant. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre roll-on apaisant liste de l'huile essentielle de lavande vraie, dont la récolte serait en baisse cette année. Source : ${VEILLE_FICTIVE}.`,
       question: 'Ce roll-on fait-il partie de vos meilleures ventes ?',
       origine_textes: 'gabarit',
       nb_probable: 1,
@@ -983,7 +1007,7 @@ export const scenario = {
       score: 27,
       raison_classement:
         '3 produits sur 9 en exposition probable (33 %), 1 en exposition possible.',
-      fait: `3 produits sur 9 analysés listent de la rose, dont le sérum éclat et la crème de jour. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre sérum éclat, votre crème de jour et votre démaquillant listent de la rose, au moment où une marque concurrente lancerait sa gamme à la rose en grande surface. Source : ${VEILLE_FICTIVE}.`,
       question:
         'Comment voyez-vous vos soins à la rose face à cette nouvelle gamme ?',
       origine_textes: 'gabarit',
@@ -1005,7 +1029,7 @@ export const scenario = {
       score: 22,
       raison_classement:
         '2 produits sur 14 en exposition probable (14 %), 4 en exposition possible.',
-      fait: `2 produits sur 14 analysés listent de l'eau florale de rose de Damas : l'Eau extraordinaire Rose et le Nectar de roses. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre Eau extraordinaire Rose et votre Nectar de roses listent de l'eau florale de rose de Damas, comme la gamme qu'une marque concurrente lancerait en grande surface. Source : ${VEILLE_FICTIVE}.`,
       question: 'La rose a-t-elle une place dans vos prochains lancements ?',
       origine_textes: 'gabarit',
       nb_probable: 2,
@@ -1028,7 +1052,7 @@ export const scenario = {
       score: 11,
       raison_classement:
         '1 produit sur 7 en exposition probable (14 %), 1 en exposition possible.',
-      fait: `1 produit sur 7 analysés liste de l'eau de rose : le tonique apaisant. Source : ${VEILLE_FICTIVE}.`,
+      fait: `Votre tonique apaisant liste de l'eau de rose, comme la gamme qu'une marque concurrente lancerait en grande surface. Source : ${VEILLE_FICTIVE}.`,
       question:
         'Ce tonique est-il vendu dans les mêmes enseignes que la nouvelle gamme ?',
       origine_textes: 'gabarit',

@@ -32,4 +32,7 @@ export const sourceApi: SourceDonnees = {
         path: { compte_id: compteId },
       }),
     ),
+
+  // Pas encore dans l'API data : l'écran se passe de la liste d'ingrédients
+  etiquettes: () => Promise.resolve({}),
 };

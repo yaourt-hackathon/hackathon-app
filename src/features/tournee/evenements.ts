@@ -1,4 +1,5 @@
 import type {
+  Appel,
   Evenement,
   ListeAppels,
   ListeEvenements,
@@ -7,8 +8,17 @@ import type {
 /** Un événement tel que l'app l'affiche : sans compte mêlant les prospects. */
 export type EvenementAffiche = Omit<Evenement, 'nb_comptes_a_appeler'>;
 
-/** Un événement de la veille, avec les clients à appeler (prospects exclus). */
-export type EvenementDetecte = EvenementAffiche & { nb_clients: number };
+/**
+ * Un événement de la veille et ses chiffres, comptés sur les clients seulement
+ * (prospects exclus) : clients à appeler, produits touchés (probables et
+ * possibles), dont probables, et produits analysés chez ces clients.
+ */
+export type EvenementDetecte = EvenementAffiche & {
+  nb_clients: number;
+  nb_produits_touches: number;
+  nb_produits_probables: number;
+  nb_produits_analyses: number;
+};
 
 /**
  * Retire `nb_comptes_a_appeler` : il compte aussi les prospects, que l'app ne
@@ -45,7 +55,7 @@ export function resumerVeille(
 ): Veille {
   const evenements = liste.evenements.map((e, i) => ({
     ...sansComptes(e),
-    nb_clients: appels[i]?.clients.length ?? 0,
+    ...chiffres(appels[i]?.clients ?? []),
   }));
   return {
     date_maj: liste.date_maj,
@@ -67,4 +77,16 @@ export function trierParEcheance<
       cle(a).localeCompare(cle(b)) ||
       b.date_publication.localeCompare(a.date_publication),
   );
+}
+
+const somme = (appels: readonly Appel[], f: (a: Appel) => number) =>
+  appels.reduce((total, a) => total + f(a), 0);
+
+function chiffres(clients: readonly Appel[]) {
+  return {
+    nb_clients: clients.length,
+    nb_produits_touches: somme(clients, (a) => a.nb_probable + a.nb_possible),
+    nb_produits_probables: somme(clients, (a) => a.nb_probable),
+    nb_produits_analyses: somme(clients, (a) => a.nb_produits_analyses),
+  };
 }
