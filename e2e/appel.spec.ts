@@ -126,6 +126,8 @@ test("« Marquer comme appelé » compte l'appel dans la liste", async ({
 test('« Client suivant » suit la sélection, repart du haut et du premier onglet', async ({
   page,
 }) => {
+  // Écran bas : le contenu de la fiche défile, le retour en haut se voit
+  await page.setViewportSize({ width: 1280, height: 560 });
   // Une sélection sans le premier client : la fiche suit la liste générée
   await page.goto('/evenements/EVT-001/clients', { waitUntil: 'networkidle' });
   await page
@@ -148,6 +150,7 @@ test('« Client suivant » suit la sélection, repart du haut et du premier ongl
   await page.getByRole('tab', { name: 'Pourquoi ce client ?' }).click();
   const contenu = page.locator('main > div.overflow-y-auto');
   await contenu.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+  expect(await contenu.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
   await page.getByRole('link', { name: 'Client suivant' }).click();
 
   await expect(page.getByText(`Appel 2 sur ${nb}`)).toBeVisible();
