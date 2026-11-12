@@ -7,14 +7,14 @@
 **Un événement entre, une tournée d'appels sort.** Le monde bouge (une règle change, une matière première manque, un concurrent lance un produit) ; l'outil dit au commercial qui appeler, pourquoi maintenant, et avec quelle phrase.
 
 - Problématique : comment savoir qui contacter, quand, et avec quels arguments sur les produits du client, pour proposer une réponse avant même l'appel d'offres ?
-- Pour qui : le KAM (Key Account Manager), qui suit les clients actuels. Persona confirmé par Givaudan le 12/11.
+- Pour qui : le KAM (Key Account Manager), qui suit les clients actuels. L'équipe y voit son persona confirmé par les réponses de Givaudan du 12/11, qui décrivent le rôle des KAM et ne parlent pas de business developers.
 - Hors périmètre : la prospection (business developer). L'API renvoie aussi des `prospects` : l'app ne montre que les `clients`.
 - Effet wahou visé : en démo, le jury propose une actualité et la tournée se recompose devant lui.
 
 ## Règles qui s'imposent au code
 
 - Pas un CRM : ni liste à tenir, ni fiche à remplir, ni suivi d'échanges.
-- Pas un outil de plus : Givaudan veut moins de saisies répétées. On dit comment la liste d'appels s'insère dans Pegasus, leur outil commercial, même si le prototype est autonome.
+- Pas un outil de plus. Givaudan, réponse du 12/11 : « Le véritable enjeu n'est donc pas d'ajouter de nouveaux outils, mais de simplifier les processus existants, d'éviter les saisies répétitives. » L'équipe en conclut : dire comment la liste d'appels s'insère dans Pegasus, leur outil commercial, même si le prototype est autonome.
 - Un fait, puis une question. Jamais de promesse de solution.
 - L'outil prépare, le commercial mène l'échange et valide chaque sortie de l'IA.
 - Des entreprises, pas des personnes (RGPD). Un commercial est un code (`KAM-01`), jamais un nom.
@@ -49,7 +49,7 @@ Le parcours du KAM, dans l'ordre. Les six stories **Must** forment la démo ; l'
 ## Questions ouvertes
 
 - Événements de la démo : lesquels, combien (deux ou trois) ?
-- Tournée du jour sur plusieurs événements : comment fusionner les listes ? Proposition Product : échéance, puis nombre de produits touchés. Givaudan suggère aussi le potentiel commercial du client.
+- Tournée du jour sur plusieurs événements : comment fusionner les listes ? Proposition Product : échéance, puis nombre de produits touchés. L'équipe propose aussi le potentiel commercial du client, d'après une réponse de Givaudan (les moyens engagés en dépendent).
 - Reformulation en direct devant le jury : fiable en « quelques secondes » ? Quel plan de secours ?
 - Périmètre du 4/12 : les six Must, et quels Should ?
 
