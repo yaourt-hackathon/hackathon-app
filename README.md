@@ -1,8 +1,8 @@
 # hackathon-app
 
-Application de l'équipe Yaourt pour le Givaudan AI Innovation Challenge (défi 01 Sales). Elle montre l'exposition des marques cosmétiques aux nouveaux allergènes du règlement UE 2023/1545, à partir de l'API de l'équipe data.
+Application de l'équipe Yaourt pour le Givaudan AI Innovation Challenge (défi 01 Sales) : un événement entre, une tournée d'appels sort. Première tranche : l'exposition des marques cosmétiques aux nouveaux allergènes du règlement UE 2023/1545, à partir de l'API de l'équipe data.
 
-Sujet : [`docs/sujet.md`](docs/sujet.md). Décisions : [`docs/adr/`](docs/adr/). Tickets : [projet « La crèmerie »](https://github.com/orgs/yaourt-hackathon/projects/2).
+Sujet : [`docs/sujet.md`](docs/sujet.md). Produit : [`docs/produit.md`](docs/produit.md). Décisions : [`docs/adr/`](docs/adr/). Tickets : [projet « La crèmerie »](https://github.com/orgs/yaourt-hackathon/projects/2).
 
 ## Lancer toute la tranche
 
