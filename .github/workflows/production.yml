@@ -16,9 +16,9 @@ permissions:
 
 jobs:
   app:
-    # Seconde garde après la protection de main : poussé par un autre compte,
-    # rien ne part
-    if: github.actor == 'Oomaxime'
+    # Seconde garde après la protection de main : poussé, ou relancé (Re-run),
+    # par un autre compte, rien ne part
+    if: github.actor == 'Oomaxime' && github.triggering_actor == 'Oomaxime'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     # Le jeton Railway vit dans cet environnement, ouvert à main seulement
@@ -34,3 +34,8 @@ jobs:
       - run: railway up --service app --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      # La version en ligne tourne bien sur le scénario de démo (ADR 0008)
+      - run: |
+          curl -fsS --retry 5 --retry-all-errors "$URL/api/health" | tee /dev/stderr | grep -q '"source":"demo"'
+        env:
+          URL: https://app-production-0acb17b9.up.railway.app

@@ -14,7 +14,7 @@ Présentation du projet : `README.md`. Ce que l'app doit faire, ses règles prod
 ## Règles
 
 - Une branche par tâche, depuis `develop` (`feature/…`, `conf/…`, `docs/…`). La PR vise `develop` et suit `.github/pull_request_template.md`.
-- `main` est la prod : seul Oomaxime y merge `develop`, et ce merge déploie (ADR 0009). La PR d'une tâche vise `develop`, jamais `main`.
+- `main` est la prod : seul Oomaxime y merge `develop`, et ce merge déploie (ADR 0009).
 - Une commande se définit une seule fois, dans `scripts` de `package.json`. La CI et la doc l'appellent (`npm run lint`), elles ne la recopient pas.
 - Un outil, une responsabilité : le code dans `eslint.config.mjs`, la forme dans `.prettierrc.json`. Aucune règle de forme dans ESLint (`eslint-config-prettier` les coupe).
 - Le hook `.husky/pre-commit` lance lint-staged sur les fichiers indexés. Sa config est dans `package.json`.
