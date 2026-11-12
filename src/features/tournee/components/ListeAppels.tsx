@@ -1,4 +1,5 @@
 import { Card } from '@heroui/react';
+import { Link } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { Pastille } from '@/components/Pastille';
 import { libelleConfiance } from '@/features/tournee/libelles';
@@ -7,9 +8,11 @@ import { resumerProduits, type AppelClient } from '@/features/tournee/tournee';
 // Stories 4 et 5 : les clients touchés, classés, avec la raison du classement
 // et les produits en cause. Jamais de prospect (docs/produit.md).
 export function ListeAppels({
+  evenementId,
   appels,
   focus,
 }: {
+  evenementId: string;
   appels: AppelClient[];
   /** Après « Valider » : le focus va au titre, qui défile à l'écran. */
   focus: boolean;
@@ -40,7 +43,7 @@ export function ListeAppels({
         <ol role="list" className="mt-4 flex flex-col gap-3">
           {appels.map((a) => (
             <li key={a.compte_id}>
-              <CarteAppel appel={a} />
+              <CarteAppel evenementId={evenementId} appel={a} />
             </li>
           ))}
         </ol>
@@ -49,9 +52,17 @@ export function ListeAppels({
   );
 }
 
-function CarteAppel({ appel }: { appel: AppelClient }) {
+function CarteAppel({
+  evenementId,
+  appel,
+}: {
+  evenementId: string;
+  appel: AppelClient;
+}) {
   return (
-    <Card className="flex-row items-start gap-4">
+    // Le lien du nom couvre toute la carte (after:inset-0) : un seul arrêt de
+    // tabulation, et un clic n'importe où ouvre la raison d'appeler
+    <Card className="relative flex-row items-start gap-4 hover:bg-surface-hover has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-focus">
       <span
         className="w-8 shrink-0 text-2xl font-semibold text-muted tabular-nums"
         data-rang={appel.rang}
@@ -61,7 +72,15 @@ function CarteAppel({ appel }: { appel: AppelClient }) {
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <Card.Header className="flex-row flex-wrap items-center justify-between gap-2">
           <div>
-            <Card.Title className="text-lg">{appel.nom_compte}</Card.Title>
+            <Card.Title className="text-lg">
+              <Link
+                to="/evenements/$evenementId/appels/$compteId"
+                params={{ evenementId, compteId: appel.compte_id }}
+                className="outline-none after:absolute after:inset-0 after:rounded-[inherit]"
+              >
+                {appel.nom_compte}
+              </Link>
+            </Card.Title>
             <Card.Description>
               Suivi par {appel.commercial ?? 'un commercial inconnu'}
             </Card.Description>
