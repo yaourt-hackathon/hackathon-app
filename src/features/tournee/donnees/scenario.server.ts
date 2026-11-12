@@ -16,7 +16,8 @@ import type {
 // - le CRM est fictif : Cattier, prospect dans l'API, est ici un client ;
 // - un fait cite sa source, une question finit par « ? ». Les faits sont dits
 //   au client (« Votre… », maquette v1) ; EVT-001 garde ses nombres et ses
-//   produits de l'API, mais ses phrases sont réécrites pour la démo.
+//   produits de l'API au commit data 05991a7 (l'API a grandi depuis), mais
+//   ses phrases sont réécrites pour la démo.
 // `origine_textes` vaut « gabarit » : l'API n'a pas de valeur « préparé » ; en
 // mode démo, l'écran dit que tout texte a été préparé par l'équipe.
 

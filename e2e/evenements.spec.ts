@@ -38,6 +38,19 @@ test("les sujets du jour, l'échéance la plus proche d'abord", async ({
   await sansMotInterdit(page);
 });
 
+test("le lien vers les marques n'apparaît qu'en mode api", async ({
+  page,
+  request,
+}) => {
+  const mode = await modeDonnees(request);
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  // En démo, /marques (API à jour) contredirait le scénario figé
+  await expect(
+    page.getByRole('link', { name: /Exposition des marques/ }),
+  ).toHaveCount(mode === 'api' ? 1 : 0);
+});
+
 test('« Lire le sujet » ouvre le sujet principal', async ({ page }) => {
   await page.goto('/');
   const titre =
