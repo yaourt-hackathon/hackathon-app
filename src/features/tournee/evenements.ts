@@ -4,10 +4,29 @@ import type {
   ListeEvenements,
 } from '@/lib/data-api/generated';
 
+/** Un événement tel que l'app l'affiche : sans compte mêlant les prospects. */
+export type EvenementAffiche = Omit<Evenement, 'nb_comptes_a_appeler'>;
+
 /** Un événement de la veille, avec les clients à appeler (prospects exclus). */
-export type EvenementDetecte = Omit<Evenement, 'nb_comptes_a_appeler'> & {
-  nb_clients: number;
-};
+export type EvenementDetecte = EvenementAffiche & { nb_clients: number };
+
+/**
+ * Retire `nb_comptes_a_appeler` : il compte aussi les prospects, que l'app ne
+ * montre pas et qui ne doivent pas atteindre le navigateur (docs/produit.md).
+ */
+export function sansComptes(e: Evenement): EvenementAffiche {
+  return {
+    evenement_id: e.evenement_id,
+    type: e.type,
+    titre: e.titre,
+    resume: e.resume,
+    source_nom: e.source_nom,
+    source_url: e.source_url,
+    date_publication: e.date_publication,
+    date_echeance: e.date_echeance,
+    statut_validation: e.statut_validation,
+  };
+}
 
 export interface Veille {
   date_maj: string;
@@ -25,15 +44,7 @@ export function resumerVeille(
   appels: readonly (ListeAppels | null)[],
 ): Veille {
   const evenements = liste.evenements.map((e, i) => ({
-    evenement_id: e.evenement_id,
-    type: e.type,
-    titre: e.titre,
-    resume: e.resume,
-    source_nom: e.source_nom,
-    source_url: e.source_url,
-    date_publication: e.date_publication,
-    date_echeance: e.date_echeance,
-    statut_validation: e.statut_validation,
+    ...sansComptes(e),
     nb_clients: appels[i]?.clients.length ?? 0,
   }));
   return {

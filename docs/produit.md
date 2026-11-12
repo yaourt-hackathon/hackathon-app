@@ -41,10 +41,10 @@ Le parcours du KAM, dans l'ordre. Les six stories **Must** forment la démo ; l'
 
 ## Ce qui existe
 
-- Dans l'app : `/`, les événements détectés (stories 1 et 2), et `/evenements/$evenementId`, l'en-tête de l'événement. Hors du parcours : `/marques` (marques par urgence) et `/marques/$id` (produits, niveau, substances, source), sur les allergènes UE 2023/1545.
+- Dans l'app : `/`, les événements détectés (stories 1 et 2), et `/evenements/$evenementId`, la reformulation à valider puis les clients à appeler (stories 3 à 5). Hors du parcours : `/marques` (marques par urgence) et `/marques/$id` (produits, niveau, substances, source), sur les allergènes UE 2023/1545.
 - Dans l'API data v0.4.0, lancée par `compose.yaml` : les routes du tableau ci-dessus, copiées dans `openapi/data-api.json`.
 - Ordre actuel des appels, calculé par l'API pour **un** événement : `score` = 5 × produits « probable » (10 au plus) + 2 × « possible » (10 au plus) + 30 × part de « probable ».
-- Manquant : la reformulation (story 3) et toute recherche à partir de critères saisis. L'API est en lecture seule et ses événements sont calculés à l'avance, donc la tournée qui se recompose devant le jury n'a pas d'API derrière elle aujourd'hui.
+- Manquant : une reformulation produite par l'IA (l'app montre un texte préparé par l'équipe) et toute recherche à partir de critères saisis. L'API est en lecture seule et ses événements sont calculés à l'avance, donc la tournée qui se recompose devant le jury n'a pas d'API derrière elle aujourd'hui.
 
 ## Questions ouvertes
 

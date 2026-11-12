@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   libelleMode,
+  libelleOrigine,
   libelleStatut,
   libelleType,
 } from '@/features/tournee/libelles';
@@ -27,5 +28,12 @@ describe('libelleMode', () => {
   it("distingue la démo de l'API", () => {
     expect(libelleMode.demo.texte).toBe('Données de démo');
     expect(libelleMode.api.texte).toBe('API data');
+  });
+});
+
+describe('libelleOrigine', () => {
+  it("dit qui a écrit le texte, l'IA seulement si une personne l'a relu", () => {
+    expect(libelleOrigine.preparee).toBe("Texte préparé par l'équipe");
+    expect(libelleOrigine.llm_valide).toContain('relu par une personne');
   });
 });
