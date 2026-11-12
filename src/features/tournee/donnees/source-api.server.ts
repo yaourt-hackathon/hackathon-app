@@ -33,6 +33,7 @@ export const sourceApi: SourceDonnees = {
       }),
     ),
 
-  // Pas encore dans l'API data : l'écran se passe de la liste d'ingrédients
+  // L'API donne l'étiquette dans la fiche compte (`ingredients`) depuis
+  // 7c8433f ; pas encore branchée (#49), l'écran s'en passe
   etiquettes: () => Promise.resolve({}),
 };
