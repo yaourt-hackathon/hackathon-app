@@ -14,6 +14,8 @@ docker compose up --build   # l'app sur http://localhost:3000, l'API data sur :8
 
 Port déjà pris : `APP_PORT=3300 DATA_API_PORT=18000 docker compose up --build`, puis `APP_PORT=3300 npm run test:e2e` pour les tests.
 
+Le parcours lit un scénario de démo embarqué dans l'app (`DATA_SOURCE=demo`, par défaut) ou l'API data (`DATA_SOURCE=api docker compose up --build`). Le choix est expliqué dans l'[ADR 0008](docs/adr/0008-source-de-donnees-commutable.md), et `/api/health` dit lequel tourne.
+
 ## Développer
 
 Node 24 ou plus. L'API data doit tourner à part, par exemple avec `docker compose up data-api`.
