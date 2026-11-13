@@ -103,7 +103,7 @@ function SujetPrincipal({ sujet }: { sujet: Sujet }) {
           >
             {sujet.ingredients.map((i) => (
               <li key={i}>
-                <Chip color="warning" variant="soft" size="sm">
+                <Chip color="accent" variant="soft" size="sm">
                   {i}
                 </Chip>
               </li>
