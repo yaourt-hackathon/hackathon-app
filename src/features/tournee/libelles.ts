@@ -19,11 +19,11 @@ export function libelleType(type: string): string {
 // Ce qui est simulé se dit à l'écran (docs/produit.md)
 export const libelleStatut: Record<Evenement['statut_validation'], Libelle> = {
   valide: { texte: 'Fait réel', couleur: 'success' },
-  test: { texte: 'Événement fictif', couleur: 'warning' },
+  test: { texte: 'Événement fictif', couleur: 'accent' },
 };
 
 export const libelleMode: Record<ModeDonnees, Libelle> = {
-  demo: { texte: 'Données de démo', couleur: 'warning' },
+  demo: { texte: 'Données de démo', couleur: 'accent' },
   api: { texte: 'API data', couleur: 'success' },
 };
 

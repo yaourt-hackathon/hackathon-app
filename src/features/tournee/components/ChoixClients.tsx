@@ -100,7 +100,7 @@ export function ChoixClients({
                   </Description>
                 </Checkbox>
                 {appel.produits && appel.produits.length > 0 && (
-                  <Chip color="warning" variant="soft" size="sm">
+                  <Chip color="accent" variant="soft" size="sm">
                     {ingredientsEnCause(appel.produits)}
                   </Chip>
                 )}

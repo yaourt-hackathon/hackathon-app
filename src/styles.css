@@ -16,9 +16,11 @@
     --default: #ebebec;
     --default-foreground: #18181b;
     --segment-foreground: #18181b;
-    --accent: #0057b8;
+    /* Couleur primaire de l'équipe (13/11). Assez sombre pour servir aussi de
+       texte sur son fond clair (contraste 8,3:1) ; l'anneau de focus la suit */
+    --accent: #1a00c5;
     --accent-foreground: #fcfcfc;
-    --accent-soft-foreground: #00458f;
+    --accent-soft-foreground: var(--accent);
     --warning: #d64d00;
     --warning-soft-foreground: #a33b00;
   }

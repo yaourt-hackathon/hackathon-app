@@ -91,7 +91,7 @@ export function ListeAppels({
                   )}
                   {appel.produits && appel.produits.length > 0 && (
                     <Chip
-                      color="warning"
+                      color="accent"
                       variant="soft"
                       size="sm"
                       className="hidden sm:inline-flex"

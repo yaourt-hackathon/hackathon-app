@@ -120,7 +120,7 @@ export function FicheAppel({
                         // pour que la liste se lise (et s'entende) comme telle
                         <span key={n}>
                           {i.enAvant ? (
-                            <mark className="rounded-xl bg-warning-soft px-1 font-medium text-warning-soft-foreground">
+                            <mark className="rounded-xl bg-accent-soft px-1 font-medium text-accent-soft-foreground">
                               {i.texte}
                             </mark>
                           ) : (
@@ -180,7 +180,7 @@ export function FicheAppel({
                     siens.
                   </span>
                   {appel.produits.length > 0 && (
-                    <Chip color="warning" variant="soft" size="sm">
+                    <Chip color="accent" variant="soft" size="sm">
                       {ingredientsEnCause(appel.produits)}
                     </Chip>
                   )}
